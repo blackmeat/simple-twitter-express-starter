@@ -46,34 +46,24 @@ const userController = {
     res.redirect("/signin")
   },
   followingsPage: (req, res) => {
-    /*塞入假資料測試用
-    Followship.create({
-      followerId: 3,
-      followingId : 1,
-    }).then(f=>console.log(123))
-    
-    Tweet.create({
-      UserId: 3,
-      description: '我很好!!'
-    })
-    */
-   
     User.findOne({
       where: {id: req.user.id},
       include: [
         {model: User, as: 'followerId'},
         {model: User, as: 'followingId'},
-        //{model: Like, as: 'LikedTweets'},
+        {model: Tweet, as: 'LikedTweets'},
         Tweet
       ]
     })
     .then(user => {
-      const numberObj = {
+      const data = {
         tweetsAmount: user.Tweets.length,
         followersAmount: user.followerId.length,
         followingsAmonut: user.followingId.length,
+        likesAmount: user.LikedTweets.length,
+        followers: user.followerId
       }
-      res.render('following', {...numberObj, followers: user.followerId})
+      res.render('following', data)
     })
   }
 }
