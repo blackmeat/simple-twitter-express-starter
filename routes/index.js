@@ -14,12 +14,16 @@ module.exports = (app, passport) => {
     }
     res.redirect('/signin')
   }
+  // 登入＆登出 
   app.get("/signup", userController.signUpPage)
   app.post("/signup", userController.signUp)
   app.get("/signin", userController.signInPage)
   app.post("/signin", passport.authenticate('local', { failureRedirect: '/signin', failureFlash: true }), userController.signIn)
   app.get("/logout", userController.logout)
-
+  // users
+  app.get("/users/:id/tweets", authenticated, userController.getUserTweets)
+  // Tweets
+  app.get("/", authenticated, (req, res) => { res.redirect("/tweets") })
   app.get("/tweets", (req, res) => {
     res.render("tweets")
   })

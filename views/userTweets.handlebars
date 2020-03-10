@@ -1,0 +1,47 @@
+<div class="container my-3">
+  <div class="row col-12">
+    <div class="col-4">
+      <div class="col-8 my-2">
+        <img src="{{User.avatar}}" alt="大頭貼" width="200px" height="200px">
+        <div class="my-3">
+          <h3>{{User.name}}</h3>
+          <p style="word-wrap: break-word;">{{User.introduction}}</p>
+        </div>
+        <div class="my-3">
+          <h4>Tweets</h4>
+          <h4>Following</h4>
+          <h4>Follower</h4>
+          <h4>Like</h4>
+        </div>
+        {{#ifCond User.id user.id}}
+        <div class="text-center">
+          <a href="/users/{{User.id}}/edit" type="button" class="btn btn-primary">Edit Profile</a>
+        </div>
+        {{else}}
+        <div class="text-center">
+          <button type="button" class="btn btn-primary">Follow</button>
+        </div>
+        {{/ifCond}}
+      </div>
+    </div>
+
+    <div class="col-8">
+      {{#each Tweets}}
+      <div class="card my-2">
+        <div class="card-body row">
+          <div class="col-3">
+            <img src="{{../User.avatar}}" alt="大頭貼" width="100px" height="100px">
+          </div>
+          <div class="col-8">
+            <h5>{{this.User.name}}<span>,{{date this.createdAt}}</span></h5>
+            <p>
+              {{this.description}}
+            </p>
+            <h6>Reply()<span class="mx-2">Like()</span></h6>
+          </div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</div>
