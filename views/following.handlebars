@@ -1,0 +1,39 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <div>
+                <img src="{{user.avatar}}" style="width: 300px" alt="">
+                <h2>{{user.name}}</h2>
+                <p>{{user.introduction}}</p>
+            </div>
+            <div>
+                <h6>Tweets: <span>{{tweetsAmount}}</span></h6>
+                <h6>Following: <span>{{followersAmount}}</span></h6>
+                <h6>Follower: <span>{{followingsAmonut}}</span></h6>
+                <h6>Like: <span></span></h6>
+            </div>
+            <a href="/users/{{user.id}}/edit" class="btn btn-primary">Edit Profile</a>
+        </div>
+        
+        <div class="col-sm-8">
+            <div class="row">
+                {{#each followers}}
+                    <div class="card col-sm-6" style="width: 18rem;">
+                        <div class="row">
+                            <img src="{{this.avatar}}" class="card-img-top col-sm-4 mt-4" style="height: 100px">
+                            <div class="card-body col-sm-8">
+                                <a href="/users/{{this.id}}/tweets">
+                                    <h5 class="card-title">@<span>{{this.name}}</span></h5>
+                                </a>
+                                <p class="card-text">{{this.introduction}}</p>
+                                <form action="/followships/{{this.id}}?_method=DELETE" method="POST">
+                                    <button type="submit">Unfollow</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</div>

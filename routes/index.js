@@ -23,4 +23,6 @@ module.exports = (app, passport) => {
   app.get("/tweets", (req, res) => {
     res.render("tweets")
   })
+
+  app.get('/users/:id/followings', authenticated, userController.followingsPage)
 }

@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt-nodejs")
 const db = require("../models")
 const User = db.User
+const Tweet = db.Tweet
+const Like = db.Like
 
 const userController = {
   signUpPage: (req, res) => {
@@ -43,6 +45,37 @@ const userController = {
     req.logout()
     res.redirect("/signin")
   },
+  followingsPage: (req, res) => {
+    /*塞入假資料測試用
+    Followship.create({
+      followerId: 3,
+      followingId : 1,
+    }).then(f=>console.log(123))
+    
+    Tweet.create({
+      UserId: 3,
+      description: '我很好!!'
+    })
+    */
+   
+    User.findOne({
+      where: {id: req.user.id},
+      include: [
+        {model: User, as: 'followerId'},
+        {model: User, as: 'followingId'},
+        //{model: Like, as: 'LikedTweets'},
+        Tweet
+      ]
+    })
+    .then(user => {
+      const numberObj = {
+        tweetsAmount: user.Tweets.length,
+        followersAmount: user.followerId.length,
+        followingsAmonut: user.followingId.length,
+      }
+      res.render('following', {...numberObj, followers: user.followerId})
+    })
+  }
 }
 
 module.exports = userController
