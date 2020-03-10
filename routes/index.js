@@ -1,4 +1,7 @@
 const userController = require("../controllers/userController")
+const tweetController = require("../controllers/tweetController")
+const multer = require('multer')
+const upload = multer({ dest: 'temp/' })
 
 module.exports = (app, passport) => {
   const authenticated = (req, res, next) => {
@@ -20,7 +23,11 @@ module.exports = (app, passport) => {
   app.post("/signin", passport.authenticate('local', { failureRedirect: '/signin', failureFlash: true }), userController.signIn)
   app.get("/logout", userController.logout)
 
-  app.get("/tweets", (req, res) => {
+  app.get("/", authenticated, (req, res) => res.redirect('/tweets'))
+  app.get("/tweets", authenticated, (req, res) => {
     res.render("tweets")
   })
+  app.post("/tweets", authenticated, tweetController.postTweet)
+  app.get("/users/:id/edit", authenticated, userController.editUser) //取得修改頁面
+  app.post("/users/:id/edit", authenticated, upload.single('avatar'), userController.postUser) //寫入修改資料
 }
