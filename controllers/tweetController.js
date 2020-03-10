@@ -1,5 +1,8 @@
 const db = require('../models')
 const Tweet = db.Tweet
+const Reply = db.Reply
+const Like = db.Like
+const Followship = db.Followship
 
 let tweetController = {
   getTweet: (req, res) => {
