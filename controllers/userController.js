@@ -1,6 +1,9 @@
 const bcrypt = require("bcrypt-nodejs")
 const db = require("../models")
 const User = db.User
+const fs = require('fs')
+const imgur = require('imgur-node-api')
+const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
 
 const userController = {
   signUpPage: (req, res) => {
@@ -43,6 +46,64 @@ const userController = {
     req.logout()
     res.redirect("/signin")
   },
+  editUser: (req, res) => {
+    if (req.user.id == req.params.id) {
+      return User.findByPk(req.params.id).then(user => {
+        console.log(user)
+        return res.render('profileedit', { user: JSON.parse(JSON.stringify(user)) }) //修改頁面
+      })
+    } else {
+      return User.findByPk(req.user.id).then(user => {
+
+        return res.render('profile', { user: JSON.parse(JSON.stringify(user)) }) //預設render為profile
+      })
+    }
+  },
+  postUser: (req, res) => {
+    if (req.user.id == req.params.id) {    //若非該使用者送出請求，重新導向目前使用者的profile
+      if (!req.body.name) {
+        req.flash('error_messages', "name didn't exist")
+        return res.redirect('back')
+      }
+
+      const { file } = req
+      if (file) {                         //修改時若有上傳圖片
+        imgur.setClientID(IMGUR_CLIENT_ID);
+        imgur.upload(file.path, (err, img) => {
+          return User.findByPk(req.params.id)
+            .then((user) => {
+              user.update({
+                name: req.body.name,
+                avatar: file ? img.data.link : user.avatar,
+                introduction: req.body.introduction
+              })
+                .then((user) => {
+                  req.flash('success_messages', 'userprofile was successfully to update')
+                  res.redirect(`/users/${user.id}/tweets`)
+                })
+            })
+        })
+      }
+      else
+        return User.findByPk(req.params.id)          //若修改時沒上傳圖片
+          .then((user) => {
+            user.update({
+              name: req.body.name,
+              avatar: user.avatar,
+              introduction: req.body.introduction
+            })
+              .then((user) => {
+                req.flash('success_messages', 'user profile was successfully to update')
+                res.redirect(`/users/${user.id}/tweets`)
+
+              })
+          })
+    } else {
+      return User.findByPk(req.user.id).then(user => {
+        return res.render('profile', { user: JSON.parse(JSON.stringify(user)) })
+      })
+    }
+  }
 }
 
 module.exports = userController
