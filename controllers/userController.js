@@ -58,7 +58,7 @@ const userController = {
           // 這位用戶Like過所有推文
           { model: Like, include: [Tweet] },
           // 這位用戶的推文包括推文的回覆、喜歡、使用者資訊
-          { model: Tweet, include: [Reply, Like, User] },
+          { model: Tweet, limit: 6, order: [["createdAt", "DESC"]], include: [Reply, Like, User] },
           // 這位用戶的追蹤者
           { model: User, as: "followerId" },
           // 這位用戶正在追蹤的人數
@@ -86,7 +86,6 @@ const userController = {
         // console.log(Tweets)
         res.render("userTweets", { User, Tweets })
       })
-
   },
   addFollow: (req, res) => {
     Followship.create({
