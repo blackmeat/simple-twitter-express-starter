@@ -37,18 +37,18 @@
     </div>
 
     <div class="col-8">
-      {{#each User.Tweets}}
+      {{#each Tweets}}
       <div class="card my-2">
         <div class="card-body row">
           <div class="col-3">
             <img src="{{../User.avatar}}" alt="大頭貼" width="100px" height="100px">
           </div>
           <div class="col-8">
-            <h5>{{this.User.name}}<span>,{{date this.createdAt}}</span></h5>
+            <h5>{{this.User.name}}<span>,{{date this.dataValues.createdAt}}</span></h5>
             <p>
-              {{this.description}}
+              {{this.dataValues.description}}
             </p>
-            <h6>Reply()<span class="mx-2">Like()</span></h6>
+            <h6>Reply({{this.ReplyCount}})<span class="mx-2">Like({{this.LikeCount}})</span></h6>
           </div>
         </div>
       </div>

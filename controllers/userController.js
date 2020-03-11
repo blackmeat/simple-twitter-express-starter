@@ -55,13 +55,18 @@ const userController = {
     User
       .findByPk(req.params.id, {
         include: [
+          // 這位用戶Like過所有推文
           { model: Like, include: [Tweet] },
+          // 這位用戶的推文包括推文的回覆、喜歡、使用者資訊
           { model: Tweet, include: [Reply, Like, User] },
+          // 這位用戶的追蹤者
           { model: User, as: "followerId" },
+          // 這位用戶正在追蹤的人數
           { model: User, as: "followingId" }
         ]
       })
       .then((User) => {
+        // 加入使用者推文及追蹤資訊
         User = {
           ...User.dataValues,
           LikeCount: User.Likes.length,
@@ -70,8 +75,16 @@ const userController = {
           FollowingCount: User.followingId.length,
           isFollowing: req.user.followingId.map(d => d.id).includes(User.id)
         }
-        console.log(User)
-        res.render("userTweets", { User })
+
+        // 每個推文的回覆數和讚數
+        const Tweets = User.Tweets.map((Tweet) => ({
+          ...Tweet,
+          LikeCount: Tweet.dataValues.Likes.length,
+          ReplyCount: Tweet.dataValues.Replies.length
+        }))
+        // console.log(User)
+        // console.log(Tweets)
+        res.render("userTweets", { User, Tweets })
       })
 
   },
