@@ -4,6 +4,7 @@ const User = db.User
 const Tweet = db.Tweet
 const Like = db.Like
 const Followship = db.Followship
+const Reply = db.Reply
 
 const userController = {
   signUpPage: (req, res) => {
@@ -95,6 +96,26 @@ const userController = {
       }
       return res.render('following', data)
     })
+  },
+  getReplies: (req, res) => {
+    Tweet.findByPk(req.params.tweet_id, {
+      include: [
+        Reply,
+        Like
+      ]
+    }).then(tweet => {
+      User.findByPk(tweet.UserId)
+          .then(user => {
+            const data = {
+              tweet : tweet,
+              tweetOwner: user,
+              repliesAmount: tweet.Replies.length,
+              likesAmount: tweet.Likes.length
+            }
+            return res.render('replies', data)
+          })
+    })
+    
   }
 }
 
