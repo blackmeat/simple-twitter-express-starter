@@ -5,6 +5,10 @@ const fs = require('fs')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
 const Followship = db.Followship
+const Like = db.Like
+const Tweet = db.Tweet
+const Reply = db.Reply
+const moment = require("moment")
 
 const userController = {
   signUpPage: (req, res) => {
@@ -129,6 +133,44 @@ const userController = {
           })
       })
   },
+  getuserlikes: (req, res) => {
+
+    Tweet.findAll({ order: [['createdAt', 'DESC']], include: [User, { model: Reply, include: [User] }, { model: Like, include: [User] }] }).then(result => {   //最新的tweet顯示在前面
+      const data = result.map(r => ({
+        ...r.dataValues,
+        createdAt: moment(r.createdAt).format('YYYY-MM-DD,HH:mm:ss'), //以moment套件，轉化成特定格式
+        description: r.dataValues.description.substring(0, 50),
+        reply: r.dataValues.Replies.length, //計算reply數量
+        like: r.dataValues.Likes.length, //計算like數量
+        isLiked: r.Likes.map(d => d.UserId).includes(Number(req.params.id)),
+        iLiked: r.Likes.map(d => d.UserId).includes(Number(req.user.id))
+      }))
+
+      User.findOne({
+        where: {
+          id: req.params.id,
+        },
+        include: [Tweet, Like, { model: User, as: 'followerId' }, { model: User, as: 'followingId' }]
+      })
+        .then(user => {
+          console.log(user)
+          // console.log(users[0].followerId)
+          // 整理 users 資料
+          user = ({
+            ...user.dataValues,
+            FollowerCount: user.followerId.length,
+            FollowingCount: user.followingId.length,
+            TweetCount: user.Tweets.length,
+            LikeCount: user.Likes.length
+          })
+          return res.render('likepage', {
+            tweets: data,
+            user: user,
+            signinUser: req.user.id
+          })
+        })
+    })
+  }
 }
 
 module.exports = userController
