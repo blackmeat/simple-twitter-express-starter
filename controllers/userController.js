@@ -1,9 +1,13 @@
 const bcrypt = require("bcrypt-nodejs")
 const db = require("../models")
 const User = db.User
+
+const Tweet = db.Tweet
+const Like = db.Like
 const fs = require('fs')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
+
 
 const userController = {
   signUpPage: (req, res) => {
@@ -46,7 +50,28 @@ const userController = {
     req.logout()
     res.redirect("/signin")
   },
-  editUser: (req, res) => {
+
+  followingsPage: (req, res) => {
+    User.findOne({
+      where: {id: req.user.id},
+      include: [
+        {model: User, as: 'followerId'},
+        {model: User, as: 'followingId'},
+        {model: Tweet, as: 'LikedTweets'},
+        Tweet
+      ]
+    })
+    .then(user => {
+      const data = {
+        tweetsAmount: user.Tweets.length,
+        followersAmount: user.followerId.length,
+        followingsAmonut: user.followingId.length,
+        likesAmount: user.LikedTweets.length,
+        followers: user.followerId
+      }
+      res.render('following', data)
+    }),
+        editUser: (req, res) => {
     if (req.user.id == req.params.id) {
       return User.findByPk(req.params.id).then(user => {
         console.log(user)
@@ -103,6 +128,7 @@ const userController = {
         return res.redirect(`/users /${user.id}/tweets`)
       })
     }
+
   }
 }
 

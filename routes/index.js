@@ -25,6 +25,10 @@ module.exports = (app, passport) => {
   app.get("/tweets", (req, res) => {
     res.render("tweets")
   })
-  app.get("/users/:id/edit", authenticated, userController.editUser) //取得修改頁面
+
+
+  app.get('/users/:id/followings', authenticated, userController.followingsPage)
+    app.get("/users/:id/edit", authenticated, userController.editUser) //取得修改頁面
   app.post("/users/:id/edit", authenticated, upload.single('avatar'), userController.postUser) //寫入修改資料
+
 }
