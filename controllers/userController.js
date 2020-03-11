@@ -100,20 +100,25 @@ const userController = {
   getReplies: (req, res) => {
     Tweet.findByPk(req.params.tweet_id, {
       include: [
-        Reply,
-        Like
+        Like,
+        User
       ]
     }).then(tweet => {
-      User.findByPk(tweet.UserId)
-          .then(user => {
-            const data = {
-              tweet : tweet,
-              tweetOwner: user,
-              repliesAmount: tweet.Replies.length,
-              likesAmount: tweet.Likes.length
-            }
-            return res.render('replies', data)
-          })
+      Reply.findAll({
+        where: {TweetId: req.params.tweet_id},
+        include: [User]
+      })
+      .then(replies => {
+        const data = {
+          replies: replies,
+          tweet: tweet,
+          repliesAmount: replies.length,
+          likesAmount: tweet.Likes.length
+        }  
+        return res.render('replies', data)
+      })
+      
+          
     })
     
   }

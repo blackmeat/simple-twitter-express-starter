@@ -26,7 +26,46 @@
         
         <div class="col-sm-8">
             <div class="row">
+                <h2>Tweets</h2>
+                <div class="card col-sm-12" style="width: 18rem;">
+                    <div class="row">
+                        <img src="{{tweet.User.avatar}}" class="card-img-top col-sm-4" alt="">
+                        <div class="card-body">
+                            <a href="/users/{{tweet.User.id}}/tweets">
+                                <h5 class="card-title">@<span>{{tweet.User.name}}</span></h5>
+                            </a>
+                            <p class="card-text">{{tweet.description}}</p>
+                            <a href="/tweets/{{tweet.id}}/replies" class="btn btn-primary">Reply ( {{repliesAmount}} )</a>
+                            <form action="" method="POST">
+                                <button type="submit" class="btn btn-danger">Like ( {{likesAmount}} )</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 
+                <h2>Replies</h2>
+                {{#each replies}}
+                <div class="card col-sm-12" style="width: 18rem;">
+                    <div class="row">
+                        <img src="{{this.User.avatar}}" class="card-img-top col-sm-4" alt="">
+                        <div class="card-body">
+                            <a href="/users/{{this.User.id}}/tweets">
+                                <h5 class="card-title">
+                                    @ {{this.User.name}}
+                                    <span>{{this.User.createdAt}}</span>
+                                </h5>
+                            </a>
+                            <p class="card-text" class="btn btn-primary">{{this.comment}}</p>
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+                <div class="card col-sm-12" style="width: 18rem;">
+                    <form action="/tweets/{{tweet.id}}/replies" method="POST">
+                        <textarea name="reply" id="reply" cols="60" rows="5"></textarea>
+                        <button type="submit">Reply</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
