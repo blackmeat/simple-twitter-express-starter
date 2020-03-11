@@ -27,5 +27,5 @@ module.exports = (app, passport) => {
   app.get('/users/:id/followings', authenticated, userController.followingsPage)
   app.get('/users/:id/followers', authenticated, userController.followersPage)
   app.get('/tweets/:tweet_id/replies', authenticated, userController.getReplies)
-
+  app.post('/tweets/:tweet_id/replies', authenticated, userController.createReply)
 }

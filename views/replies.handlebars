@@ -2,9 +2,9 @@
     <div class="row">
         <div class="col-sm-4">
             <div>
-                <img src="{{user.avatar}}" style="width: 300px" alt="">
-                <h2>{{user.name}}</h2>
-                <p>{{user.introduction}}</p>
+                <img src="{{tweet.User.avatar}}" style="width: 300px" alt="">
+                <h2>{{tweet.User.name}}</h2>
+                <p>{{tweet.User.introduction}}</p>
             </div>
             <div>
                 <h6>Tweets: <span>{{tweetsAmount}}</span></h6>
@@ -12,15 +12,18 @@
                 <h6>Follower: <span>{{followingsAmonut}}</span></h6>
                 <h6>Like: <span>{{likesAmount}}</span></h6>
             </div>
-            {{#ifCond user.id tweetOwner.id}}
-                <a href="/users/{{user.id}}/edit" class="btn btn-primary">Edit Profile</a>
+            {{#ifCond user.id tweet.User.id}}
+                <a href="/users/{{tweet.User.id}}/edit" class="btn btn-primary">Edit Profile</a>
             {{else}}
+                {{#if isFollowed}}
+                <form action="/followships/{{tweet.User.id}}" method="Delete">
+                    <button type="submit" class="btn btn-primary">UnFollow</button>
+                </form>
+                {{else}}
                 <form action="/followships/{{tweetOwner.id}}" method="POST">
                     <button type="submit" class="btn btn-primary">Follow</button>
                 </form>
-                <form action="/followships/{{tweetOwner.id}}" method="POST">
-                    <button type="submit" class="btn btn-primary">Unfollow</button>
-                </form>
+                {{/if}}
             {{/ifCond}}
         </div>
         
@@ -30,14 +33,14 @@
                 <div class="card col-sm-12" style="width: 18rem;">
                     <div class="row">
                         <img src="{{tweet.User.avatar}}" class="card-img-top col-sm-4" alt="">
-                        <div class="card-body">
+                        <div class="card-body col-sm-8">
                             <a href="/users/{{tweet.User.id}}/tweets">
                                 <h5 class="card-title">@<span>{{tweet.User.name}}</span></h5>
                             </a>
                             <p class="card-text">{{tweet.description}}</p>
                             <a href="/tweets/{{tweet.id}}/replies" class="btn btn-primary">Reply ( {{repliesAmount}} )</a>
-                            <form action="" method="POST">
-                                <button type="submit" class="btn btn-danger">Like ( {{likesAmount}} )</button>
+                            <form action="/tweets/{{tweets.id}}/like" method="POST">
+                                <button type="submit" class="btn btn-danger">Like ( {{tweetLikedAmount}} )</button>
                             </form>
                         </div>
                     </div>
@@ -45,16 +48,14 @@
                 
                 <h2>Replies</h2>
                 {{#each replies}}
-                <div class="card col-sm-12" style="width: 18rem;">
+                <div class="card col-sm-12 mb-4" style="width: 18rem;">
                     <div class="row">
                         <img src="{{this.User.avatar}}" class="card-img-top col-sm-4" alt="">
-                        <div class="card-body">
-                            <a href="/users/{{this.User.id}}/tweets">
-                                <h5 class="card-title">
-                                    @ {{this.User.name}}
-                                    <span>{{this.User.createdAt}}</span>
-                                </h5>
-                            </a>
+                        <div class="card-body col-sm-8">
+                            <h5 class="card-title">
+                                <a href="/users/{{this.User.id}}/tweets">@ {{this.User.name}}</a>
+                                <span>{{this.User.createdAt}}</span>
+                            </h5>
                             <p class="card-text" class="btn btn-primary">{{this.comment}}</p>
                         </div>
                     </div>
