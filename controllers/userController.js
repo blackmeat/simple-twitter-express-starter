@@ -3,6 +3,7 @@ const db = require("../models")
 const User = db.User
 const Tweet = db.Tweet
 const Like = db.Like
+const Followship = db.Followship
 
 const userController = {
   signUpPage: (req, res) => {
@@ -47,12 +48,12 @@ const userController = {
   },
   followingsPage: (req, res) => {
     User.findOne({
-      where: {id: req.user.id},
+      where: {id: req.params.id},
       include: [
         {model: User, as: 'followerId'},
         {model: User, as: 'followingId'},
-        {model: Tweet, as: 'LikedTweets'},
-        Tweet
+        Tweet,
+        Like
       ]
     })
     .then(user => {
@@ -60,10 +61,39 @@ const userController = {
         tweetsAmount: user.Tweets.length,
         followersAmount: user.followerId.length,
         followingsAmonut: user.followingId.length,
-        likesAmount: user.LikedTweets.length,
-        followers: user.followerId
+        likesAmount: user.Likes.length,
+        followingsAndFollowers: user.followerId,
+        paramsId: Number(req.params.id)
       }
-      res.render('following', data)
+      return res.render('following', data)
+    })
+  },
+  followersPage: (req, res) => {
+    User.findOne({
+      where: {id: req.params.id},
+      include: [
+        {model: User, as: 'followerId'},
+        {model: User, as: 'followingId'},
+        Tweet,
+        Like
+      ]
+    })
+    .then(user => {
+      const followers = user.followingId.map(follower => {
+        return {
+          ...follower.dataValues,
+          isFollowed: req.user.followerId.map(d => d.id).includes(follower.id)
+        }
+      })
+      const data = {
+        tweetsAmount: user.Tweets.length,
+        followersAmount: user.followerId.length,
+        followingsAmonut: user.followingId.length,
+        likesAmount: user.Likes.length,
+        followingsAndFollowers: followers,
+        paramsId: Number(req.params.id)
+      }
+      return res.render('following', data)
     })
   }
 }

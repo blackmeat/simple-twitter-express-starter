@@ -25,4 +25,5 @@ module.exports = (app, passport) => {
   })
 
   app.get('/users/:id/followings', authenticated, userController.followingsPage)
+  app.get('/users/:id/followers', authenticated, userController.followersPage)
 }

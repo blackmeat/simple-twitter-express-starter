@@ -12,12 +12,19 @@
                 <h6>Follower: <span>{{followingsAmonut}}</span></h6>
                 <h6>Like: <span>{{likesAmount}}</span></h6>
             </div>
-            <a href="/users/{{user.id}}/edit" class="btn btn-primary">Edit Profile</a>
+            {{#ifCond user.id paramsId}}
+                <a href="/users/{{user.id}}/edit" class="btn btn-primary">Edit Profile</a>
+            {{else}}
+                <form action="/followships/{{paramsId}}" method="POST">
+                    <button type="submit">Follow</button>
+                </form>
+            {{/ifCond}}
         </div>
         
         <div class="col-sm-8">
             <div class="row">
-                {{#each followers}}
+                
+                {{#each followingsAndFollowers}}
                     <div class="card col-sm-6" style="width: 18rem;">
                         <div class="row">
                             <img src="{{this.avatar}}" class="card-img-top col-sm-4 mt-4" style="height: 100px">
@@ -26,9 +33,15 @@
                                     <h5 class="card-title">@<span>{{this.name}}</span></h5>
                                 </a>
                                 <p class="card-text">{{this.introduction}}</p>
+                                {{#if this.isFollowed}}
                                 <form action="/followships/{{this.id}}?_method=DELETE" method="POST">
                                     <button type="submit">Unfollow</button>
                                 </form>
+                                {{else}}
+                                <form action="/followships/{{this.id}}?" method="POST">
+                                    <button type="submit">Follow</button>
+                                </form>
+                                {{/if}}
                             </div>
                         </div>
                     </div>
