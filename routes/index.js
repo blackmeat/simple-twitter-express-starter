@@ -24,8 +24,11 @@ module.exports = (app, passport) => {
   app.get("/logout", userController.logout)
 
   app.get("/", authenticated, (req, res) => res.redirect('/tweets'))
-  app.get("/tweets", authenticated, tweetController.getTweet)
+  app.get("/tweets", authenticated, tweetController.getTweets)
   app.post("/tweets", authenticated, tweetController.postTweet)
+  app.post("/tweets/:id/like", authenticated, tweetController.likeTweet)
+  app.delete("/tweets/:id/unlike", authenticated, tweetController.unlikeTweet)
+
   app.get("/users/:id/edit", authenticated, userController.editUser) //取得修改頁面
   app.post("/users/:id/edit", authenticated, upload.single('avatar'), userController.postUser) //寫入修改資料
 

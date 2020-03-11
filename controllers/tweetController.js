@@ -8,10 +8,10 @@ const User = db.User
 
 
 let tweetController = {
-  getTweet: (req, res) => {
+  getTweets: (req, res) => {
 
     Tweet.findAll({ order: [['createdAt', 'DESC']], include: [User, { model: Reply, include: [User] }, { model: Like, include: [User] }] }).then(result => {   //最新的tweet顯示在前面
-      // console.log(result[0].dataValues)
+      // console.log(result[9].Likes)
 
       const data = result.map(r => ({
         ...r.dataValues,
@@ -19,6 +19,7 @@ let tweetController = {
         description: r.dataValues.description.substring(0, 50),
         reply: r.dataValues.Replies.length, //計算reply數量
         like: r.dataValues.Likes.length, //計算like數量
+        isLiked: r.Likes.map(d => d.UserId).includes(req.user.id)
       }))
 
       User.findAll({
@@ -63,6 +64,29 @@ let tweetController = {
     })
       .then((Tweet) => {
         res.redirect("/tweets")
+      })
+  },
+  likeTweet: (req, res) => {
+    return Like.create({
+      UserId: req.user.id,
+      TweetId: req.params.id
+    })
+      .then((restaurant) => {
+        return res.redirect('back')
+      })
+  },
+  unlikeTweet: (req, res) => {
+    return Like.findOne({
+      where: {
+        UserId: req.user.id,
+        TweetId: req.params.id
+      }
+    })
+      .then((tweet) => {
+        tweet.destroy()
+          .then((restaurant) => {
+            return res.redirect('back')
+          })
       })
   }
 }
