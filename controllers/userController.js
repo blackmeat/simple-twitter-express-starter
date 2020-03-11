@@ -4,6 +4,7 @@ const User = db.User
 const fs = require('fs')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
+const Followship = db.Followship
 
 const userController = {
   signUpPage: (req, res) => {
@@ -103,7 +104,31 @@ const userController = {
         return res.render('profile', { user: JSON.parse(JSON.stringify(user)) })
       })
     }
-  }
+  },
+  addFollow: (req, res) => {
+    return Followship.create({
+      followerId: req.user.id,
+      followingId: req.params.followingId
+    })
+      .then((followingId) => {
+        return res.redirect('back')
+      })
+  },
+
+  removeFollow: (req, res) => {
+    return Followship.findOne({
+      where: {
+        followerId: req.user.id,
+        followingId: req.params.followingId
+      }
+    })
+      .then((followship) => {
+        followship.destroy()
+          .then((restaurant) => {
+            return res.redirect('back')
+          })
+      })
+  },
 }
 
 module.exports = userController

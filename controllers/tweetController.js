@@ -1,12 +1,51 @@
 const db = require('../models')
+const moment = require('moment')
 const Tweet = db.Tweet
 const Reply = db.Reply
 const Like = db.Like
 const Followship = db.Followship
+const User = db.User
+
 
 let tweetController = {
   getTweet: (req, res) => {
 
+    Tweet.findAll({ order: [['createdAt', 'DESC']], include: [User, { model: Reply, include: [User] }, { model: Like, include: [User] }] }).then(result => {   //最新的tweet顯示在前面
+      // console.log(result[0].dataValues)
+
+      const data = result.map(r => ({
+        ...r.dataValues,
+        createdAt: moment(r.createdAt).format('YYYY-MM-DD,HH:mm:ss'), //以moment套件，轉化成特定格式
+        description: r.dataValues.description.substring(0, 50),
+        reply: r.dataValues.Replies.length, //計算reply數量
+        like: r.dataValues.Likes.length, //計算like數量
+      }))
+
+      User.findAll({
+        limit: 10,
+        include: [
+          { model: User, as: 'followerId' }
+        ]
+      }).then(users => {
+        // console.log(users[0].id)
+        // console.log(users[0].followerId)
+        // 整理 users 資料
+        users = users.map(user => ({
+          ...user.dataValues,
+          // 計算追蹤者人數
+          FollowerCount: user.followerId.length,
+          // 判斷目前登入使用者是否已追蹤該 User 物件
+          isFollowed: user.followerId.map(d => d.id).includes(req.user.id)
+        }))
+        // 依追蹤者人數排序清單
+        users = users.sort((a, b) => b.FollowerCount - a.FollowerCount)
+        return res.render('tweets', {
+          tweets: data,
+          users: JSON.parse(JSON.stringify(users)),
+          nowUser: req.user.id      //用於判定自己不能follow自己
+        })
+      })
+    })
   },
   postTweet: (req, res) => {
     if (req.body.text.length > 140) {
