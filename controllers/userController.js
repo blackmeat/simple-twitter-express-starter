@@ -53,9 +53,9 @@ const userController = {
         return res.render('profileedit', { user: JSON.parse(JSON.stringify(user)) }) //修改頁面
       })
     } else {
-      return User.findByPk(req.user.id).then(user => {
+      return User.findByPk(req.params.id).then(user => {
 
-        return res.render('profile', { user: JSON.parse(JSON.stringify(user)) }) //預設render為profile
+        return res.redirect(`/users/${user.id}/tweets`)  //預設render為profile
       })
     }
   },
@@ -99,8 +99,8 @@ const userController = {
               })
           })
     } else {
-      return User.findByPk(req.user.id).then(user => {
-        return res.render('profile', { user: JSON.parse(JSON.stringify(user)) })
+      return User.findByPk(req.params.id).then(user => {
+        return res.redirect(`/users /${user.id}/tweets`)
       })
     }
   }
