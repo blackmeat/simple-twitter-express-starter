@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt-nodejs")
 const db = require("../models")
 const User = db.User
+const Tweet = db.Tweet
+const Like = db.Like
 const fs = require('fs')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
@@ -46,6 +48,7 @@ const userController = {
     req.logout()
     res.redirect("/signin")
   },
+
   editUser: (req, res) => {
     if (req.user.id == req.params.id) {
       return User.findByPk(req.params.id).then(user => {
@@ -59,6 +62,7 @@ const userController = {
       })
     }
   },
+    
   postUser: (req, res) => {
     if (req.user.id == req.params.id) {    //若非該使用者送出請求，重新導向目前使用者的profile
       if (!req.body.name) {
@@ -103,6 +107,28 @@ const userController = {
         return res.render('profile', { user: JSON.parse(JSON.stringify(user)) })
       })
     }
+  },
+
+  followingsPage: (req, res) => {
+    User.findOne({
+      where: {id: req.user.id},
+      include: [
+        {model: User, as: 'followerId'},
+        {model: User, as: 'followingId'},
+        {model: Tweet, as: 'LikedTweets'},
+        Tweet
+      ]
+    })
+    .then(user => {
+      const data = {
+        tweetsAmount: user.Tweets.length,
+        followersAmount: user.followerId.length,
+        followingsAmonut: user.followingId.length,
+        likesAmount: user.LikedTweets.length,
+        followers: user.followerId
+      }
+      res.render('following', data)
+    })
   }
 }
 
