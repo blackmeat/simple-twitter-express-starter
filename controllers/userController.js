@@ -87,6 +87,7 @@ const userController = {
         res.render("userTweets", { User, Tweets })
       })
   },
+  
   addFollow: (req, res) => {
     Followship.create({
       followerId: req.user.id,
@@ -96,6 +97,7 @@ const userController = {
         res.redirect("back")
       })
   },
+  
   deleteFollow: (req, res) => {
     Followship
       .findOne({
@@ -108,6 +110,28 @@ const userController = {
         followship.destroy()
         res.redirect("back")
       })
+  },
+  
+  followingsPage: (req, res) => {
+    User.findOne({
+      where: {id: req.user.id},
+      include: [
+        {model: User, as: 'followerId'},
+        {model: User, as: 'followingId'},
+        {model: Tweet, as: 'LikedTweets'},
+        Tweet
+      ]
+    })
+    .then(user => {
+      const data = {
+        tweetsAmount: user.Tweets.length,
+        followersAmount: user.followerId.length,
+        followingsAmonut: user.followingId.length,
+        likesAmount: user.LikedTweets.length,
+        followers: user.followerId
+      }
+      res.render('following', data)
+    })
   }
 }
 
