@@ -2,9 +2,13 @@ const bcrypt = require("bcrypt-nodejs")
 const db = require("../models")
 const User = db.User
 const Reply = db.Reply
+const Followship = db.Followship
 const Tweet = db.Tweet
 const Like = db.Like
-const Followship = db.Followship
+const fs = require('fs')
+const imgur = require('imgur-node-api')
+const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
+
 
 const userController = {
   signUpPage: (req, res) => {
@@ -113,25 +117,97 @@ const userController = {
   },
   
   followingsPage: (req, res) => {
+    // 找到這一頁所屬的擁有者
     User.findOne({
-      where: {id: req.user.id},
+      where: {id: req.params.id},
       include: [
         {model: User, as: 'followerId'},
         {model: User, as: 'followingId'},
-        {model: Tweet, as: 'LikedTweets'},
-        Tweet
+        Tweet,
+        Like
       ]
     })
     .then(user => {
+      const followings = user.followingId.map(follower => {
+        return {
+          ...follower.dataValues,
+          // 拿出現在登入的使用者追蹤了哪些人，並比對當前頁面擁有者追蹤的人是否在裡面
+          isFollowed: req.user.followingId.map(d => d.id).includes(follower.id)
+        }
+      })
+      
       const data = {
+        currentUser: user,
         tweetsAmount: user.Tweets.length,
-        followersAmount: user.followerId.length,
-        followingsAmonut: user.followingId.length,
-        likesAmount: user.LikedTweets.length,
-        followers: user.followerId
+        followersAmount: user.followingId.length,
+        followingsAmonut: user.followerId.length,
+        likesAmount: user.Likes.length,
+        followingsAndFollowers: followings,
+        paramsId: Number(req.params.id),
+        isFollowed: req.user.followingId.map(d => d.id).includes(user.id)
       }
       res.render('following', data)
     })
+  },
+  
+  editUser: (req, res) => {
+    if (req.user.id == req.params.id) {
+      return User.findByPk(req.params.id).then(user => {
+        console.log(user)
+        return res.render('profileedit', { user: JSON.parse(JSON.stringify(user)) }) //修改頁面
+      })
+    } else {
+      return User.findByPk(req.params.id).then(user => {
+
+        return res.redirect(`/users/${user.id}/tweets`)  //預設render為profile
+      })
+    }
+  },
+  
+  postUser: (req, res) => {
+    if (req.user.id == req.params.id) {    //若非該使用者送出請求，重新導向目前使用者的profile
+      if (!req.body.name) {
+        req.flash('error_messages', "name didn't exist")
+        return res.redirect('back')
+      }
+
+      const { file } = req
+      if (file) {                         //修改時若有上傳圖片
+        imgur.setClientID(IMGUR_CLIENT_ID);
+        imgur.upload(file.path, (err, img) => {
+          return User.findByPk(req.params.id)
+            .then((user) => {
+              user.update({
+                name: req.body.name,
+                avatar: file ? img.data.link : user.avatar,
+                introduction: req.body.introduction
+              })
+                .then((user) => {
+                  req.flash('success_messages', 'userprofile was successfully to update')
+                  res.redirect(`/users/${user.id}/tweets`)
+                })
+            })
+        })
+      }
+      else
+        return User.findByPk(req.params.id)          //若修改時沒上傳圖片
+          .then((user) => {
+            user.update({
+              name: req.body.name,
+              avatar: user.avatar,
+              introduction: req.body.introduction
+            })
+              .then((user) => {
+                req.flash('success_messages', 'user profile was successfully to update')
+                res.redirect(`/users/${user.id}/tweets`)
+
+              })
+          })
+    } else {
+      return User.findByPk(req.params.id).then(user => {
+        return res.redirect(`/users /${user.id}/tweets`)
+      })
+    }
   }
 }
 
