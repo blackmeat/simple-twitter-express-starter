@@ -8,11 +8,10 @@
             </div>
             <div>
                 <h6>Tweets: <span>{{tweetsAmount}}</span></h6>
-                <h6>Following: <span>{{followersAmount}}</span></h6>
-                <h6>Follower: <span>{{followingsAmonut}}</span></h6>
+                <h6>Following: <span>{{followingsAmonut}}</span></h6>
+                <h6>Follower: <span>{{followersAmount}}</span></h6>
                 <h6>Like: <span>{{likesAmount}}</span></h6>
             </div>
-            
 
             {{#ifCond user.id currentUser.id}}
                 <a href="/users/{{currentUser.id}}/edit" class="btn btn-primary">Edit Profile</a>
@@ -26,12 +25,13 @@
                     <button type="submit" class="btn btn-primary">Follow</button>
                 </form>
                 {{/if}}
+
             {{/ifCond}}
         </div>
         
         <div class="col-sm-8">
             <div class="row">
-                
+
                 {{#each followingsAndFollowers}}
                     <div class="card col-sm-6" style="width: 18rem;">
                         <div class="row">

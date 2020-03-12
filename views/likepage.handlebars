@@ -1,0 +1,65 @@
+<div class="container row">
+  <div class="col-4">
+
+    <div class="container">
+      <div class="card" style="width: 18rem;">
+        <img src="{{user.avatar}}" class="card-img-top" alt="...">
+        <div class="card-body text-column">
+          <a href="/users/{{user.id}}/tweets">
+            <h5 class="card-title">{{user.name}}</h5>
+          </a>
+          <p class="card-text">{{user.introduction}}
+          </p>
+          <div class="container">
+            <a href="/users/{{user.id}}/tweets">Tweets {{user.TweetCount}}</a>
+          </div>
+          <div class="container">
+            <a href="/users/{{user.id}}/followings">Following {{user.FollowingCount}}</a>
+          </div>
+          <div class="container">
+            <a href="/users/{{user.id}}/followers">Follower {{user.FollowerCount}}</a>
+          </div>
+          <div class="container">
+            <a href="/users/{{user.id}}/likes">Like {{user.LikeCount}}</a>
+          </div>
+          {{#ifCond user.id signinUser}}
+          <a href="/users/{{user.id}}/edit" class="btn btn-primary">Edit Profile</a>
+          {{/ifCond}}
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="col-8">
+    <h1>Like</h1>
+    {{#each tweets}}
+    {{#if this.isLiked }}
+    <div class="card mb-3">
+      <div class="row ">
+        <div class="col-md-4 ">
+          <img src="{{this.User.avatar}}" class="card-img mt-3 ml-3" alt="...">
+        </div>
+        <div class="col-md-8">
+          <div class="card-body">
+            <a href="/users/{{this.User.id}}/tweets">
+              <h5 class="card-title">@{{this.User.name}},{{this.createdAt}}</h5>
+            </a>
+            <p class="card-text">{{this.description}}</p>
+            <a href="/tweets/{{this.id}}/replies">Reply({{this.reply}})</a>
+            {{#if this.iLiked }}
+            <form action="/tweets/{{this.id}}/unlike?_method=DELETE" method="POST">
+              <button type="submit" class="btn btn-link " style="color: red;">Unlike({{this.like}})</button>
+            </form>
+            {{else}}
+            <form action="/tweets/{{this.id}}/like" method="POST">
+              <button type="submit" class="btn btn-link">Like({{this.like}})</button>
+            </form>
+            {{/if}}
+          </div>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+    {{/each}}
+  </div>
+</div>
