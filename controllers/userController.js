@@ -93,29 +93,29 @@ const userController = {
         res.render("userTweets", { User, Tweets })
       })
   },
-  
+
   followingsPage: (req, res) => {
     User.findOne({
-      where: {id: req.user.id},
+      where: { id: req.user.id },
       include: [
-        {model: User, as: 'followerId'},
-        {model: User, as: 'followingId'},
-        {model: Tweet, as: 'LikedTweets'},
+        { model: User, as: 'followerId' },
+        { model: User, as: 'followingId' },
+        { model: Tweet, as: 'LikedTweets' },
         Tweet
       ]
     })
-    .then(user => {
-      const data = {
-        tweetsAmount: user.Tweets.length,
-        followersAmount: user.followerId.length,
-        followingsAmonut: user.followingId.length,
-        likesAmount: user.LikedTweets.length,
-        followers: user.followerId
-      }
-      res.render('following', data)
-    })
+      .then(user => {
+        const data = {
+          tweetsAmount: user.Tweets.length,
+          followersAmount: user.followerId.length,
+          followingsAmonut: user.followingId.length,
+          likesAmount: user.LikedTweets.length,
+          followers: user.followerId
+        }
+        res.render('following', data)
+      })
   },
-   
+
   editUser: (req, res) => {
     if (req.user.id == req.params.id) {
       return User.findByPk(req.params.id).then(user => {
@@ -128,7 +128,7 @@ const userController = {
       })
     }
   },
-    
+
 
   postUser: (req, res) => {
     if (req.user.id == req.params.id) {    //若非該使用者送出請求，重新導向目前使用者的profile
@@ -170,12 +170,12 @@ const userController = {
               })
           })
     } else {
-      return User.findByPk(req.user.id).then(user => {
-        return res.render('profile', { user: JSON.parse(JSON.stringify(user)) })
+      return User.findByPk(req.params.id).then(user => {
+        return res.redirect(`/users/${user.id}/tweets`)
       })
     }
   },
-    
+
   addFollow: (req, res) => {
     return Followship.create({
       followerId: req.user.id,
@@ -200,7 +200,7 @@ const userController = {
           })
       })
   },
-    
+
   getuserlikes: (req, res) => {
     Tweet.findAll({ order: [['createdAt', 'DESC']], include: [User, { model: Reply, include: [User] }, { model: Like, include: [User] }] }).then(result => {   //最新的tweet顯示在前面
       const data = result.map(r => ({
@@ -236,10 +236,8 @@ const userController = {
             signinUser: req.user.id
           })
         })
-      return User.findByPk(req.params.id).then(user => {
-        return res.redirect(`/users /${user.id}/tweets`)
-      })
-    }
+
+    })
   }
 }
 
