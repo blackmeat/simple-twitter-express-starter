@@ -2,28 +2,36 @@
     <div class="row">
         <div class="col-sm-4">
             <div>
-                <img src="{{user.avatar}}" style="width: 300px" alt="">
-                <h2>{{user.name}}</h2>
-                <p>{{user.introduction}}</p>
+                <img src="{{currentUser.avatar}}" style="width: 300px" alt="">
+                <h2>{{currentUser.name}}</h2>
+                <p>{{currentUser.introduction}}</p>
             </div>
             <div>
                 <h6>Tweets: <span>{{tweetsAmount}}</span></h6>
-                <h6>Following: <span>{{followersAmount}}</span></h6>
-                <h6>Follower: <span>{{followingsAmonut}}</span></h6>
+                <h6>Following: <span>{{followingsAmonut}}</span></h6>
+                <h6>Follower: <span>{{followersAmount}}</span></h6>
                 <h6>Like: <span>{{likesAmount}}</span></h6>
             </div>
-            {{#ifCond user.id paramsId}}
-                <a href="/users/{{user.id}}/edit" class="btn btn-primary">Edit Profile</a>
+
+            {{#ifCond user.id currentUser.id}}
+                <a href="/users/{{currentUser.id}}/edit" class="btn btn-primary">Edit Profile</a>
             {{else}}
-                <form action="/followships/{{paramsId}}" method="POST">
-                    <button type="submit">Follow</button>
+                {{#if isFollowed}}
+                <form action="/followships/{{currentUser.id}}?_method=DELETE" method="POST">
+                    <button type="submit" class="btn btn-primary">UnFollow</button>
                 </form>
+                {{else}}
+                <form action="/followships/{{currentUser.id}}" method="POST">
+                    <button type="submit" class="btn btn-primary">Follow</button>
+                </form>
+                {{/if}}
+
             {{/ifCond}}
         </div>
         
         <div class="col-sm-8">
             <div class="row">
-                
+
                 {{#each followingsAndFollowers}}
                     <div class="card col-sm-6" style="width: 18rem;">
                         <div class="row">
@@ -33,15 +41,18 @@
                                     <h5 class="card-title">@<span>{{this.name}}</span></h5>
                                 </a>
                                 <p class="card-text">{{this.introduction}}</p>
-                                {{#if this.isFollowed}}
-                                <form action="/followships/{{this.id}}?_method=DELETE" method="POST">
-                                    <button type="submit">Unfollow</button>
-                                </form>
+                                {{#ifCond this.id ../user.id}}
                                 {{else}}
-                                <form action="/followships/{{this.id}}?" method="POST">
-                                    <button type="submit">Follow</button>
-                                </form>
-                                {{/if}}
+                                    {{#if this.isFollowed}}
+                                        <form action="/followships/{{this.id}}?_method=DELETE" method="POST">
+                                            <button type="submit" class="btn btn-danger">UnFollow</button>
+                                        </form>
+                                    {{else}}
+                                        <form action="/followships/{{this.id}}" method="POST">
+                                            <button type="submit" class="btn btn-primary">Follow</button>
+                                        </form>
+                                    {{/if}}
+                                {{/ifCond}}
                             </div>
                         </div>
                     </div>

@@ -11,6 +11,7 @@ const methodOverride = require("method-override")
 
 const app = express()
 const port = 3000
+
 app.use(methodOverride("_method"))
 app.engine("handlebars", exhbs({
   defaultLayout: "main",
@@ -21,7 +22,9 @@ app.set("view engine", "handlebars")
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use('/upload', express.static(__dirname + '/upload'))
 
+
 app.use(methodOverride("_method"))
+
 
 app.use(session({ secret: "12345", resave: false, saveUninitialized: false }))
 app.use(flash())

@@ -9,6 +9,9 @@ const Like = db.Like
 const fs = require('fs')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
+const moment = require("moment")
+
+
 
 
 const userController = {
@@ -92,7 +95,6 @@ const userController = {
         res.render("userTweets", { User, Tweets })
       })
   },
-  
   addFollow: (req, res) => {
     Followship.create({
       followerId: req.user.id,
@@ -116,8 +118,8 @@ const userController = {
         res.redirect("back")
       })
   },
-  
   followingsPage: (req, res) => {
+    // 找到這一頁所屬的擁有者
     User.findOne({
       where: {id: req.params.id},
       include: [
@@ -128,7 +130,16 @@ const userController = {
       ]
     })
     .then(user => {
+      const followings = user.followingId.map(follower => {
+        return {
+          ...follower.dataValues,
+          // 拿出現在登入的使用者追蹤了哪些人，並比對當前頁面擁有者追蹤的人是否在裡面
+          isFollowed: req.user.followingId.map(d => d.id).includes(follower.id)
+        }
+      })
+      
       const data = {
+        currentUser: user,
         tweetsAmount: user.Tweets.length,
         followersAmount: user.followerId.length,
         followingsAmonut: user.followingId.length,
@@ -136,11 +147,46 @@ const userController = {
         followingsAndFollowers: user.followerId,
         paramsId: Number(req.params.id)
       }
-
-        res.render('following', data)
+      return res.render('following', data)
     })
   },
-   editUser: (req, res) => {
+
+  followersPage: (req, res) => {
+    // 找到當前頁面的擁有者
+    User.findOne({
+      where: {id: req.params.id},
+      include: [
+        {model: User, as: 'followerId'},
+        {model: User, as: 'followingId'},
+        Tweet,
+        Like
+      ]
+    })
+    .then(user => {
+      console.log(req.user.followerId.id)
+      // 撈出當前頁面擁有者被誰追蹤，並重構資料把isFollowed塞進去
+      const followers = user.followerId.map(follower => {
+        return {
+          ...follower.dataValues,
+          // 拿出現在登入的使用者追蹤了哪些人，並比對當前頁面擁有者的追蹤者是否在裡面
+          isFollowed: req.user.followingId.map(d => d.id).includes(follower.id)
+        }
+      })
+      const data = {
+        currentUser: user,
+        tweetsAmount: user.Tweets.length,
+        followersAmount: user.followerId.length,
+        followingsAmonut: user.followingId.length,
+        likesAmount: user.Likes.length,
+        followingsAndFollowers: followers,
+        paramsId: Number(req.params.id),
+        // 拿出現在登入的使用者追蹤了哪些人，判斷當前頁面擁有者是否在裡面
+        isFollowed: req.user.followingId.map(d => d.id).includes(user.id)
+      }
+      return res.render('following', data)
+    })
+  },
+  editUser: (req, res) => {
     if (req.user.id == req.params.id) {
       return User.findByPk(req.params.id).then(user => {
         console.log(user)
@@ -148,12 +194,10 @@ const userController = {
       })
     } else {
       return User.findByPk(req.params.id).then(user => {
-
         return res.redirect(`/users/${user.id}/tweets`)  //預設render為profile
       })
     }
   },
-    
   postUser: (req, res) => {
     if (req.user.id == req.params.id) {    //若非該使用者送出請求，重新導向目前使用者的profile
       if (!req.body.name) {
@@ -195,39 +239,47 @@ const userController = {
           })
     } else {
       return User.findByPk(req.params.id).then(user => {
-        return res.redirect(`/users /${user.id}/tweets`)
+        return res.redirect(`/users/${user.id}/tweets`)
       })
     }
   },
-  followersPage: (req, res) => {
-    User.findOne({
-      where: {id: req.params.id},
-      include: [
-        {model: User, as: 'followerId'},
-        {model: User, as: 'followingId'},
-        Tweet,
-        Like
-      ]
-    })
-    .then(user => {
-      const followers = user.followingId.map(follower => {
-        return {
-          ...follower.dataValues,
-          isFollowed: req.user.followerId.map(d => d.id).includes(follower.id)
-        }
+  getuserlikes: (req, res) => {
+    Tweet.findAll({ order: [['createdAt', 'DESC']], include: [User, { model: Reply, include: [User] }, { model: Like, include: [User] }] }).then(result => {   //最新的tweet顯示在前面
+      const data = result.map(r => ({
+        ...r.dataValues,
+        createdAt: moment(r.createdAt).format('YYYY-MM-DD,HH:mm:ss'), //以moment套件，轉化成特定格式
+        description: r.dataValues.description.substring(0, 50),
+        reply: r.dataValues.Replies.length, //計算reply數量
+        like: r.dataValues.Likes.length, //計算like數量
+        isLiked: r.Likes.map(d => d.UserId).includes(Number(req.params.id)),
+        iLiked: r.Likes.map(d => d.UserId).includes(Number(req.user.id))
+      }))
+
+      User.findOne({
+        where: {
+          id: req.params.id,
+        },
+        include: [Tweet, Like, { model: User, as: 'followerId' }, { model: User, as: 'followingId' }]
       })
-      const data = {
-        tweetsAmount: user.Tweets.length,
-        followersAmount: user.followerId.length,
-        followingsAmonut: user.followingId.length,
-        likesAmount: user.Likes.length,
-        followingsAndFollowers: followers,
-        paramsId: Number(req.params.id)
-      }
-      return res.render('following', data)
+        .then(user => {
+          console.log(user)
+          // console.log(users[0].followerId)
+          // 整理 users 資料
+          user = ({
+            ...user.dataValues,
+            FollowerCount: user.followerId.length,
+            FollowingCount: user.followingId.length,
+            TweetCount: user.Tweets.length,
+            LikeCount: user.Likes.length
+          })
+          return res.render('likepage', {
+            tweets: data,
+            user: user,
+            signinUser: req.user.id
+          })
+        })
     })
-  },
-  getReplies: (req, res) => {
+  },getReplies: (req, res) => {
     // 先撈出該筆tweet
     Tweet.findByPk(req.params.tweet_id, {
       include: [
@@ -275,8 +327,7 @@ const userController = {
     })
     .then(reply => {
       res.redirect('back')
-    })
-  }
+
 }
 
 module.exports = userController
