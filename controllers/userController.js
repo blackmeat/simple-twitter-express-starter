@@ -139,8 +139,10 @@ const userController = {
         isFollowed: req.user.followingId.map(d => d.id).includes(user.id)
       }
       res.render('following', data)
-    }),
-        editUser: (req, res) => {
+    })
+  },
+  
+  editUser: (req, res) => {
     if (req.user.id == req.params.id) {
       return User.findByPk(req.params.id).then(user => {
         console.log(user)
@@ -153,7 +155,7 @@ const userController = {
       })
     }
   },
-    
+  
   postUser: (req, res) => {
     if (req.user.id == req.params.id) {    //若非該使用者送出請求，重新導向目前使用者的profile
       if (!req.body.name) {
