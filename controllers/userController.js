@@ -69,6 +69,7 @@ const userController = {
     })
   },
   followersPage: (req, res) => {
+    // 找到當前頁面的擁有者
     User.findOne({
       where: {id: req.params.id},
       include: [
@@ -79,13 +80,16 @@ const userController = {
       ]
     })
     .then(user => {
-      const followers = user.followingId.map(follower => {
+      // 撈出當前頁面擁有者被誰追蹤，並重構資料把isFollowed塞進去
+      const followers = user.followerId.map(follower => {
         return {
           ...follower.dataValues,
-          isFollowed: req.user.followerId.map(d => d.id).includes(follower.id)
+          // 拿出現在登入的使用者追蹤了哪些人，並比對當前頁面擁有者的追蹤者是否在裡面
+          isFollowed: req.user.followingId.map(d => d.id).includes(follower.id)
         }
       })
       const data = {
+        currentUser: user,
         tweetsAmount: user.Tweets.length,
         followersAmount: user.followerId.length,
         followingsAmonut: user.followingId.length,

@@ -3,6 +3,7 @@ const LocalStrategy = require("passport-local").Strategy
 const bcrypt = require("bcrypt-nodejs")
 const db = require("../models")
 const User = db.User
+const Like = db.Like
 
 passport.use(new LocalStrategy(
   {
