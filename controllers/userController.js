@@ -10,6 +10,7 @@ const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
 
 
+
 const userController = {
   signUpPage: (req, res) => {
     res.render('signup')
@@ -116,6 +117,7 @@ const userController = {
       })
   },
   
+
   followingsPage: (req, res) => {
     // 找到這一頁所屬的擁有者
     User.findOne({
@@ -151,6 +153,7 @@ const userController = {
   },
   
   editUser: (req, res) => {
+
     if (req.user.id == req.params.id) {
       return User.findByPk(req.params.id).then(user => {
         console.log(user)
@@ -158,7 +161,6 @@ const userController = {
       })
     } else {
       return User.findByPk(req.params.id).then(user => {
-
         return res.redirect(`/users/${user.id}/tweets`)  //預設render為profile
       })
     }
@@ -205,10 +207,10 @@ const userController = {
           })
     } else {
       return User.findByPk(req.params.id).then(user => {
-        return res.redirect(`/users /${user.id}/tweets`)
+        return res.redirect(`/users/${user.id}/tweets`)
       })
     }
-  }
+  },
 }
 
 module.exports = userController
