@@ -1,0 +1,33 @@
+<h1 class="pb-2">Tweet後台</h1>
+<div style="font-size: 18px;">
+  <a href="/admin/tweets">Tweets</a><span> | </span><a href="/admin/users">Users</a>
+</div>
+
+<hr>
+
+<table class="table">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">Tweet ID</th>
+      <th scope="col">Name</th>
+      <th scope="col">Tweet Content</th>
+      <th scope="col">Newest Reply</th>
+      <th scope="col">#</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each tweets}}
+    <tr>
+      <th scope="row">{{this.id}}</th>
+      <td>{{this.User.name}}</td>
+      <td>{{this.description}}</td>
+      <td></td>
+      <td>
+        <form action="/admin/tweets/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
+          <button type="submit" class="btn btn-link">Delete</button>
+        </form>
+      </td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>

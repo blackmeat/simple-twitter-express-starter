@@ -13,7 +13,7 @@
           <h4>Follower {{User.FollowerCount}}</h4>
           <h4>Like {{User.LikeCount}}</h4>
         </div>
-        {{#ifCond User.id user.id}}
+        {{#ifCond User.id userInfo.id}}
         <div class="text-center">
           <a href="/users/{{User.id}}/edit" type="button" class="btn btn-primary">Edit Profile</a>
         </div>
