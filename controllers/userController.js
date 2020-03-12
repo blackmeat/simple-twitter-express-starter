@@ -128,13 +128,21 @@ const userController = {
       ]
     })
     .then(user => {
+      const followings = user.followingId.map(follower => {
+        return {
+          ...follower.dataValues,
+          // 拿出現在登入的使用者追蹤了哪些人，並比對當前頁面擁有者追蹤的人是否在裡面
+          isFollowed: req.user.followingId.map(d => d.id).includes(follower.id)
+        }
+      })
+      
       const data = {
         currentUser: user,
         tweetsAmount: user.Tweets.length,
         followersAmount: user.followingId.length,
         followingsAmonut: user.followerId.length,
         likesAmount: user.Likes.length,
-        followingsAndFollowers: user.followingId,
+        followingsAndFollowers: followings,
         paramsId: Number(req.params.id),
         isFollowed: req.user.followingId.map(d => d.id).includes(user.id)
       }
