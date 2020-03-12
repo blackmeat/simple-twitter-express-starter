@@ -138,6 +138,7 @@ const userController = {
       return res.render('following', data)
     })
   },
+
   followersPage: (req, res) => {
     // 找到當前頁面的擁有者
     User.findOne({
@@ -150,6 +151,7 @@ const userController = {
       ]
     })
     .then(user => {
+      console.log(req.user.followerId.id)
       // 撈出當前頁面擁有者被誰追蹤，並重構資料把isFollowed塞進去
       const followers = user.followerId.map(follower => {
         return {
@@ -165,10 +167,14 @@ const userController = {
         followingsAmonut: user.followingId.length,
         likesAmount: user.Likes.length,
         followingsAndFollowers: followers,
-        paramsId: Number(req.params.id)
+        paramsId: Number(req.params.id),
+        // 拿出現在登入的使用者追蹤了哪些人，判斷當前頁面擁有者是否在裡面
+        isFollowed: req.user.followingId.map(d => d.id).includes(user.id)
       }
       return res.render('following', data)
-    }),
+    })
+  },
+
   editUser: (req, res) => {
     if (req.user.id == req.params.id) {
       return User.findByPk(req.params.id).then(user => {
