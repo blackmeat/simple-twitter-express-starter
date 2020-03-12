@@ -16,11 +16,11 @@
                 <a href="/users/{{tweet.User.id}}/edit" class="btn btn-primary">Edit Profile</a>
             {{else}}
                 {{#if isFollowed}}
-                <form action="/followships/{{tweet.User.id}}" method="Delete">
+                <form action="/followships/{{tweet.User.id}}?_method=DELETE" method="POST">
                     <button type="submit" class="btn btn-primary">UnFollow</button>
                 </form>
                 {{else}}
-                <form action="/followships/{{tweetOwner.id}}" method="POST">
+                <form action="/followships/{{tweet.User.id}}" method="POST">
                     <button type="submit" class="btn btn-primary">Follow</button>
                 </form>
                 {{/if}}

@@ -28,4 +28,6 @@ module.exports = (app, passport) => {
   app.get('/users/:id/followers', authenticated, userController.followersPage)
   app.get('/tweets/:tweet_id/replies', authenticated, userController.getReplies)
   app.post('/tweets/:tweet_id/replies', authenticated, userController.createReply)
+  app.post('/followships/:followingId', authenticated, userController.following)
+  app.delete('/followships/:followingId', authenticated, userController.unFollowing)
 }

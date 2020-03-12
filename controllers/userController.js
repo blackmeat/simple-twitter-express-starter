@@ -117,7 +117,7 @@ const userController = {
       })
       .then(user => {
         // 檢查該筆tweet的發文者有沒有被現在登入的使用者follow過(供頁面左半Follow或Unfollow用)
-        const isFollowed = req.user.Likes.map(d=>d.id).includes(user.id)
+        const isFollowed = req.user.followerId.map(d=>d.id).includes(user.id)
         const data = {
           replies: tweet.Replies,
           repliesAmount: tweet.Replies.length,
@@ -130,7 +130,6 @@ const userController = {
           likesAmount: user.Likes.length,
           isFollowed: isFollowed
         }
-        console.log(req.user.Likes)
         return res.render('replies', data)
       })
     })
@@ -146,6 +145,25 @@ const userController = {
     })
     .then(reply => {
       res.redirect('back')
+    })
+  },
+  following: (req, res) => {
+    Followship.create({
+      followerId: req.params.followingId,
+      followingId: req.user.id
+    })
+    .then(followship => {
+      return res.redirect('back')
+    })
+  },
+  unFollowing: (req, res) => {
+    Followship.findOne({
+      where: {followerId: req.params.followingId}
+    })
+    .then(followship => {
+      console.log(666666666666666,followship)
+      followship.destroy()
+                .then(followship => res.redirect('back'))
     })
   }
 }

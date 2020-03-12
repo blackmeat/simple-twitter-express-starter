@@ -5,10 +5,11 @@ const bodyParser = require("body-parser")
 const passport = require("./config/passport")
 const session = require("express-session")
 const flash = require("connect-flash")
+const methodOverride = require('method-override')
 
 const app = express()
 const port = 3000
-
+app.use(methodOverride("_method"))
 app.engine("handlebars", exhbs({
   defaultLayout: "main",
   helpers: require("./config/handlebars-helper")
