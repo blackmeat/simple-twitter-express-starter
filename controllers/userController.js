@@ -146,25 +146,6 @@ const userController = {
     .then(reply => {
       res.redirect('back')
     })
-  },
-  following: (req, res) => {
-    Followship.create({
-      followerId: req.params.followingId,
-      followingId: req.user.id
-    })
-    .then(followship => {
-      return res.redirect('back')
-    })
-  },
-  unFollowing: (req, res) => {
-    Followship.findOne({
-      where: {followerId: req.params.followingId}
-    })
-    .then(followship => {
-      console.log(666666666666666,followship)
-      followship.destroy()
-                .then(followship => res.redirect('back'))
-    })
   }
 }
 
