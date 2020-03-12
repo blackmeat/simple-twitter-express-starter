@@ -102,7 +102,8 @@ const userController = {
         const Tweets = User.Tweets.map((Tweet) => ({
           ...Tweet,
           LikeCount: Tweet.dataValues.Likes.length,
-          ReplyCount: Tweet.dataValues.Replies.length
+          ReplyCount: Tweet.dataValues.Replies.length,
+          isLiked: Tweet.dataValues.Likes.map(d => d.UserId).includes(req.user.id)
         }))
         // console.log(User)
         // console.log(Tweets)
