@@ -83,7 +83,8 @@ let tweetController = {
     })
       .then((like) => {
         like.destroy()
-          .then((restaurant) => {
+          .then((like) => {
+
             return res.redirect('back')
           })
       })
