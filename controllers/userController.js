@@ -1,12 +1,14 @@
 const bcrypt = require("bcrypt-nodejs")
 const db = require("../models")
 const User = db.User
+const Reply = db.Reply
+const Followship = db.Followship
 const Tweet = db.Tweet
 const Like = db.Like
 const fs = require('fs')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
-const Followship = db.Followship
+
 
 
 const userController = {
@@ -38,18 +40,83 @@ const userController = {
         })
     }
   },
+
   signInPage: (req, res) => {
     res.render("signin")
   },
+
   signIn: (req, res) => {
     req.flash("success_messages", "成功登入")
     res.redirect("/tweets")
   },
+
   logout: (req, res) => {
     req.flash("success_messages", "已經成功登出")
     req.logout()
     res.redirect("/signin")
   },
+
+  getUserTweets: (req, res) => {
+    User
+      .findByPk(req.params.id, {
+        include: [
+          // 這位用戶Like過所有推文
+          { model: Like, include: [Tweet] },
+          // 這位用戶的推文包括推文的回覆、喜歡、使用者資訊
+          { model: Tweet, limit: 6, order: [["createdAt", "DESC"]], include: [Reply, Like, User] },
+          // 這位用戶的追蹤者
+          { model: User, as: "followerId" },
+          // 這位用戶正在追蹤的人數
+          { model: User, as: "followingId" }
+        ]
+      })
+      .then((User) => {
+        // 加入使用者推文及追蹤資訊
+        User = {
+          ...User.dataValues,
+          LikeCount: User.Likes.length,
+          TweetCount: User.Tweets.length,
+          FollowerCount: User.followerId.length,
+          FollowingCount: User.followingId.length,
+          isFollowing: req.user.followingId.map(d => d.id).includes(User.id)
+        }
+
+        // 每個推文的回覆數和讚數
+        const Tweets = User.Tweets.map((Tweet) => ({
+          ...Tweet,
+          LikeCount: Tweet.dataValues.Likes.length,
+          ReplyCount: Tweet.dataValues.Replies.length
+        }))
+        // console.log(User)
+        // console.log(Tweets)
+        res.render("userTweets", { User, Tweets })
+      })
+  },
+  
+  addFollow: (req, res) => {
+    Followship.create({
+      followerId: req.user.id,
+      followingId: req.params.followingId
+    })
+      .then((followship) => {
+        res.redirect("back")
+      })
+  },
+  
+  deleteFollow: (req, res) => {
+    Followship
+      .findOne({
+        where: {
+          followerId: req.user.id,
+          followingId: req.params.followingId
+        }
+      })
+      .then((followship) => {
+        followship.destroy()
+        res.redirect("back")
+      })
+  },
+  
 
   followingsPage: (req, res) => {
     User.findOne({
@@ -70,9 +137,11 @@ const userController = {
         followers: user.followerId
       }
       res.render('following', data)
+
     })
   },
     editUser: (req, res) => {
+
     if (req.user.id == req.params.id) {
       return User.findByPk(req.params.id).then(user => {
         console.log(user)
@@ -80,11 +149,12 @@ const userController = {
       })
     } else {
       return User.findByPk(req.params.id).then(user => {
-
-        return res.redirect(`/users/${user.id}/tweets`) //預設render為profile
+        return res.redirect(`/users/${user.id}/tweets`)  //預設render為profile
       })
     }
   },
+    
+
   postUser: (req, res) => {
     if (req.user.id == req.params.id) {    //若非該使用者送出請求，重新導向目前使用者的profile
       if (!req.body.name) {
@@ -129,30 +199,6 @@ const userController = {
         return res.redirect(`/users/${user.id}/tweets`)
       })
     }
-  },
-  addFollow: (req, res) => {
-    return Followship.create({
-      followerId: req.user.id,
-      followingId: req.params.followingId
-    })
-      .then((followingId) => {
-        return res.redirect('back')
-      })
-  },
-
-  removeFollow: (req, res) => {
-    return Followship.findOne({
-      where: {
-        followerId: req.user.id,
-        followingId: req.params.followingId
-      }
-    })
-      .then((followship) => {
-        followship.destroy()
-          .then((restaurant) => {
-            return res.redirect('back')
-          })
-      })
   },
 }
 
