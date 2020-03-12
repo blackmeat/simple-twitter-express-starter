@@ -86,7 +86,7 @@ const userController = {
 
         // 每個推文的回覆數和讚數
         const Tweets = User.Tweets.map((Tweet) => ({
-          ...Tweet,
+          ...Tweet.dataValues,
           LikeCount: Tweet.dataValues.Likes.length,
           ReplyCount: Tweet.dataValues.Replies.length,
           isLiked: Tweet.dataValues.Likes.map(d => d.UserId).includes(req.user.id)
@@ -147,8 +147,9 @@ const userController = {
           followersAmount: user.followerId.length,
           followingsAmonut: user.followingId.length,
           likesAmount: user.Likes.length,
-          followingsAndFollowers: user.followerId,
-          paramsId: Number(req.params.id)
+          followingsAndFollowers: followings,
+          paramsId: Number(req.params.id),
+          isFollowed: req.user.followingId.map(d => d.id).includes(user.id)
         }
         return res.render('following', data)
       })
@@ -312,12 +313,13 @@ const userController = {
             repliesAmount: tweet.Replies.length,
             tweet: tweet,
             tweetLikedAmount: tweet.Likes.length,
-
             tweetsAmount: user.Tweets.length,
             followersAmount: user.followerId.length,
             followingsAmonut: user.followingId.length,
             likesAmount: user.Likes.length,
-            isFollowed: isFollowed
+            isFollowed: isFollowed,
+            isLiked: tweet.Likes.map(d => d.UserId).includes(req.user.id)
+
           }
           return res.render('replies', data)
         })
@@ -338,7 +340,5 @@ const userController = {
       })
   }
 
-
 }
-
 module.exports = userController

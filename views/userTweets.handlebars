@@ -46,9 +46,11 @@
           </div>
           {{!-- card右側 --}}
           <div class="col-8">
-            <h5>{{this.User.name}}<span>,{{date this.dataValues.createdAt}}</span></h5>
+            <a href="/users/{{this.User.id}}/tweets">
+              <h5>{{this.User.name}}<span>,{{date this.createdAt}}</span></h5>
+            </a>
             <p>
-              {{this.dataValues.description}}
+              {{this.description}}
             </p>
             <div class="row">
               <div style="float: left;">
