@@ -23,7 +23,6 @@ let tweetController = {
       }))
 
       User.findAll({
-        limit: 10,
         include: [
           { model: User, as: 'followerId' }
         ]
@@ -39,7 +38,7 @@ let tweetController = {
           isFollowed: user.followerId.map(d => d.id).includes(req.user.id)
         }))
         // 依追蹤者人數排序清單
-        users = users.sort((a, b) => b.FollowerCount - a.FollowerCount)
+        users = users.sort((a, b) => b.FollowerCount - a.FollowerCount).slice(0, 10)
         return res.render('tweets', {
           tweets: data,
           users: JSON.parse(JSON.stringify(users)),
