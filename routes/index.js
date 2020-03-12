@@ -38,9 +38,11 @@ module.exports = (app, passport) => {
   app.get('/users/:id/followings', authenticated, userController.followingsPage)
   app.get("/users/:id/edit", authenticated, userController.editUser) //取得修改頁面
   app.post("/users/:id/edit", authenticated, upload.single('avatar'), userController.postUser) //寫入修改資料
+
   // Tweets
   app.get("/", authenticated, (req, res) => { res.redirect("/tweets") })
   app.get("/tweets", (req, res) => { res.render("tweets") })
+
   // Follow
   app.post("/followships/:followingId", authenticated, userController.addFollow)
   app.delete("/followships/:followingId", authenticated, userController.deleteFollow)

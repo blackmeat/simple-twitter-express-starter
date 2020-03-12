@@ -14,11 +14,11 @@ module.exports = {
     const minute = a.getMinutes()
     return `${year}-${month}-${date},${hour}:${minute}`
   },
+  
   ifNoCond: function (a, b, options) { //用於自己不能follow自己
     if (a !== b) {
       return options.fn(this)
     }
     return options.inverse(this)
   }
-
 }
