@@ -117,26 +117,40 @@ const userController = {
   },
   
   followingsPage: (req, res) => {
+    // 找到這一頁所屬的擁有者
     User.findOne({
-      where: {id: req.user.id},
+      where: {id: req.params.id},
       include: [
         {model: User, as: 'followerId'},
         {model: User, as: 'followingId'},
-        {model: Tweet, as: 'LikedTweets'},
-        Tweet
+        Tweet,
+        Like
       ]
     })
     .then(user => {
+      const followings = user.followingId.map(follower => {
+        return {
+          ...follower.dataValues,
+          // 拿出現在登入的使用者追蹤了哪些人，並比對當前頁面擁有者追蹤的人是否在裡面
+          isFollowed: req.user.followingId.map(d => d.id).includes(follower.id)
+        }
+      })
+      
       const data = {
+        currentUser: user,
         tweetsAmount: user.Tweets.length,
-        followersAmount: user.followerId.length,
-        followingsAmonut: user.followingId.length,
-        likesAmount: user.LikedTweets.length,
-        followers: user.followerId
+        followersAmount: user.followingId.length,
+        followingsAmonut: user.followerId.length,
+        likesAmount: user.Likes.length,
+        followingsAndFollowers: followings,
+        paramsId: Number(req.params.id),
+        isFollowed: req.user.followingId.map(d => d.id).includes(user.id)
       }
       res.render('following', data)
-    }),
-        editUser: (req, res) => {
+    })
+  },
+  
+  editUser: (req, res) => {
     if (req.user.id == req.params.id) {
       return User.findByPk(req.params.id).then(user => {
         console.log(user)
@@ -149,7 +163,7 @@ const userController = {
       })
     }
   },
-    
+  
   postUser: (req, res) => {
     if (req.user.id == req.params.id) {    //若非該使用者送出請求，重新導向目前使用者的profile
       if (!req.body.name) {

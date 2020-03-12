@@ -12,6 +12,5 @@ module.exports = {
     const hour = a.getHours()
     const minute = a.getMinutes()
     return `${year}-${month}-${date},${hour}:${minute}`
-  },
-
+  }
 }
