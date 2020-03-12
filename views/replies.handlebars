@@ -8,25 +8,25 @@
             </div>
             <div>
                 <h6>Tweets: <span>{{tweetsAmount}}</span></h6>
-                <h6>Following: <span>{{followersAmount}}</span></h6>
-                <h6>Follower: <span>{{followingsAmonut}}</span></h6>
+                <h6>Following: <span>{{followingsAmonut}}</span></h6>
+                <h6>Follower: <span>{{followersAmount}}</span></h6>
                 <h6>Like: <span>{{likesAmount}}</span></h6>
             </div>
             {{#ifCond user.id tweet.User.id}}
-                <a href="/users/{{tweet.User.id}}/edit" class="btn btn-primary">Edit Profile</a>
+            <a href="/users/{{tweet.User.id}}/edit" class="btn btn-primary">Edit Profile</a>
             {{else}}
-                {{#if isFollowed}}
-                <form action="/followships/{{tweet.User.id}}?_method=DELETE" method="POST">
-                    <button type="submit" class="btn btn-primary">UnFollow</button>
-                </form>
-                {{else}}
-                <form action="/followships/{{tweet.User.id}}" method="POST">
-                    <button type="submit" class="btn btn-primary">Follow</button>
-                </form>
-                {{/if}}
+            {{#if isFollowed}}
+            <form action="/followships/{{tweet.User.id}}?_method=DELETE" method="POST">
+                <button type="submit" class="btn btn-primary">UnFollow</button>
+            </form>
+            {{else}}
+            <form action="/followships/{{tweet.User.id}}" method="POST">
+                <button type="submit" class="btn btn-primary">Follow</button>
+            </form>
+            {{/if}}
             {{/ifCond}}
         </div>
-        
+
         <div class="col-sm-8">
             <div class="row">
                 <h2>Tweets</h2>
@@ -38,14 +38,22 @@
                                 <h5 class="card-title">@<span>{{tweet.User.name}}</span></h5>
                             </a>
                             <p class="card-text">{{tweet.description}}</p>
-                            <a href="/tweets/{{tweet.id}}/replies" class="btn btn-primary">Reply ( {{repliesAmount}} )</a>
-                            <form action="/tweets/{{tweets.id}}/like" method="POST">
-                                <button type="submit" class="btn btn-danger">Like ( {{tweetLikedAmount}} )</button>
+                            <a href="/tweets/{{tweet.id}}/replies" class="btn btn-primary">Reply ( {{repliesAmount}}
+                                )</a>
+                            {{#if isLiked }}
+                            <form action="/tweets/{{tweet.id}}/unlike?_method=DELETE" method="POST">
+                                <button type="submit" class="btn btn-link "
+                                    style="color: red;">Unlike({{tweetLikedAmount}})</button>
                             </form>
+                            {{else}}
+                            <form action="/tweets/{{tweet.id}}/like" method="POST">
+                                <button type="submit" class="btn btn-link">Like({{tweetLikedAmount}})</button>
+                            </form>
+                            {{/if}}
                         </div>
                     </div>
                 </div>
-                
+
                 <h2>Replies</h2>
                 {{#each replies}}
                 <div class="card col-sm-12 mb-4" style="width: 18rem;">
@@ -54,7 +62,7 @@
                         <div class="card-body col-sm-8">
                             <h5 class="card-title">
                                 <a href="/users/{{this.User.id}}/tweets">@ {{this.User.name}}</a>
-                                <span>{{this.User.createdAt}}</span>
+                                <span>{{date this.User.createdAt}}</span>
                             </h5>
                             <p class="card-text" class="btn btn-primary">{{this.comment}}</p>
                         </div>
