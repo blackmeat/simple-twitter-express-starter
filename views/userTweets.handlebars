@@ -50,16 +50,22 @@
             <p>
               {{this.dataValues.description}}
             </p>
-            <a href="/tweets/{{this.id}}/replies">Reply({{this.ReplyCount}})</a>
-            {{#if this.isLiked }}
-            <form action="/tweets/{{this.id}}/unlike?_method=DELETE" method="POST">
-              <button type="submit" class="btn btn-link " style="color: red;">Unlike({{this.LikeCount}})</button>
-            </form>
-            {{else}}
-            <form action="/tweets/{{this.id}}/like" method="POST">
-              <button type="submit" class="btn btn-link">Like({{this.LikeCount}})</button>
-            </form>
-            {{/if}}
+            <div class="row">
+              <div style="float: left;">
+                <a href="/tweets/{{this.id}}/replies" class="btn btn-link">Reply({{this.ReplyCount}})</a>
+              </div>
+              <div style="float: left;">
+                {{#if this.isLiked }}
+                <form action="/tweets/{{this.id}}/unlike?_method=DELETE" method="POST">
+                  <button type="submit" class="btn btn-link" style="color: red;">Unlike({{this.LikeCount}})</button>
+                </form>
+                {{else}}
+                <form action="/tweets/{{this.id}}/like" method="POST">
+                  <button type="submit" class="btn btn-link">Like({{this.LikeCount}})</button>
+                </form>
+                {{/if}}
+              </div>
+            </div>
           </div>
         </div>
       </div>
