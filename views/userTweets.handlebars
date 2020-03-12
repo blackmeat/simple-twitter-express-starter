@@ -1,0 +1,58 @@
+<div class="container my-3 ">
+  <div class="row col-12">
+    <div class="col-4">
+      <div class="col-8 my-2">
+        <img src="{{User.avatar}}" alt="大頭貼" width="200px" height="200px">
+        <div class="my-3">
+          <h3>{{User.name}}</h3>
+          <p style="word-wrap: break-word;">{{User.introduction}}</p>
+        </div>
+        <div class="my-3">
+          <h4>Tweets {{User.TweetCount}}</h4>
+          <h4>Following {{User.FollowingCount}}</h4>
+          <h4>Follower {{User.FollowerCount}}</h4>
+          <h4>Like {{User.LikeCount}}</h4>
+        </div>
+        {{#ifCond User.id user.id}}
+        <div class="text-center">
+          <a href="/users/{{User.id}}/edit" type="button" class="btn btn-primary">Edit Profile</a>
+        </div>
+        {{else}}
+        {{#if User.isFollowing}}
+        <form action="/followships/{{User.id}}?_method=DELETE" method="POST">
+          <div class="text-center">
+            <button type="submit" class="btn btn-danger">Unfollow</button>
+          </div>
+        </form>
+        {{else}}
+        <form action="/followships/{{User.id}}" method="POST">
+          <div class="text-center">
+            <button type="submit" class="btn btn-primary">Follow</button>
+          </div>
+        </form>
+        {{/if}}
+
+        {{/ifCond}}
+      </div>
+    </div>
+
+    <div class="col-8">
+      {{#each Tweets}}
+      <div class="card my-2">
+        <div class="card-body row">
+          <div class="col-3">
+            <img src="{{../User.avatar}}" alt="大頭貼" width="100px" height="100px">
+          </div>
+          <div class="col-8">
+            <h5>{{this.User.name}}<span>,{{date this.dataValues.createdAt}}</span></h5>
+            <p>
+              {{this.dataValues.description}}
+            </p>
+            <h6>Reply({{this.ReplyCount}})<span class="mx-2">Like({{this.LikeCount}})</span></h6>
+          </div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</div>
