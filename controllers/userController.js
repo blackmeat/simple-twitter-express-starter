@@ -6,7 +6,6 @@ const Tweet = db.Tweet
 const Like = db.Like
 const Followship = db.Followship
 
-
 const userController = {
   signUpPage: (req, res) => {
     res.render('signup')
@@ -133,7 +132,7 @@ const userController = {
         followship.destroy()
         res.redirect("back")
       })
-  }
+  },
 }
 
 module.exports = userController
