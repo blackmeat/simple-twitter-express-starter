@@ -70,7 +70,7 @@ let tweetController = {
       UserId: req.user.id,
       TweetId: req.params.id
     })
-      .then((restaurant) => {
+      .then((like) => {
         return res.redirect('back')
       })
   },
@@ -81,8 +81,8 @@ let tweetController = {
         TweetId: req.params.id
       }
     })
-      .then((tweet) => {
-        tweet.destroy()
+      .then((like) => {
+        like.destroy()
           .then((restaurant) => {
             return res.redirect('back')
           })
