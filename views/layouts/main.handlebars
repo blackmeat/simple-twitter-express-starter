@@ -18,12 +18,13 @@
       <ul class="navbar-nav mr-auto">
       </ul>
       <div>
-        {{#ifCond user.role "admin"}}
+        {{#ifCond userInfo.role "admin"}}
         <a href="/admin" style="color: white;margin-right: 10px;">Admin 後台</a>
         {{/ifCond}}
-        {{#if user}}
-        <span style="color: white;margin-right: 10px;"><a href="/users/{{user.id}}/tweets"><img src="{{user.avatar}}"
-              alt="大頭貼" width="40px" height="40px" class="mx-1 rounded-circle"></a> {{user.name}}</span>
+        {{#if userInfo}}
+        <span style="color: white;margin-right: 10px;"><a href="/users/{{userInfo.id}}/tweets"><img
+              src="{{userInfo.avatar}}" alt="大頭貼" width="40px" height="40px" class="mx-1 rounded-circle"></a>
+          {{userInfo.name}}</span>
         <a href="/logout"><button class="btn btn-outline-success my-2 my-sm-0">LogOut</button></a>
         {{/if}}
       </div>

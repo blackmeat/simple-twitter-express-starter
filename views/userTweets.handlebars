@@ -40,15 +40,34 @@
       {{#each Tweets}}
       <div class="card my-2">
         <div class="card-body row">
-          <div class="col-3">
-            <img src="{{../User.avatar}}" alt="大頭貼" width="100px" height="100px">
+          {{!-- card左側 --}}
+          <div class="col-4">
+            <img src="{{../User.avatar}}" alt="大頭貼" width="180px" height="120px">
           </div>
+          {{!-- card右側 --}}
           <div class="col-8">
-            <h5>{{this.User.name}}<span>,{{date this.dataValues.createdAt}}</span></h5>
+            <a href="/users/{{this.User.id}}/tweets">
+              <h5>{{this.User.name}}<span>,{{date this.createdAt}}</span></h5>
+            </a>
             <p>
-              {{this.dataValues.description}}
+              {{this.description}}
             </p>
-            <h6>Reply({{this.ReplyCount}})<span class="mx-2">Like({{this.LikeCount}})</span></h6>
+            <div class="row">
+              <div style="float: left;">
+                <a href="/tweets/{{this.id}}/replies" class="btn btn-link">Reply({{this.ReplyCount}})</a>
+              </div>
+              <div style="float: left;">
+                {{#if this.isLiked }}
+                <form action="/tweets/{{this.id}}/unlike?_method=DELETE" method="POST">
+                  <button type="submit" class="btn btn-link" style="color: red;">Unlike({{this.LikeCount}})</button>
+                </form>
+                {{else}}
+                <form action="/tweets/{{this.id}}/like" method="POST">
+                  <button type="submit" class="btn btn-link">Like({{this.LikeCount}})</button>
+                </form>
+                {{/if}}
+              </div>
+            </div>
           </div>
         </div>
       </div>
