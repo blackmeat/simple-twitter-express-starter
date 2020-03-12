@@ -35,15 +35,17 @@ module.exports = (app, passport) => {
   app.post("/users/:id/edit", authenticated, upload.single('avatar'), userController.postUser) //寫入修改資料
 
   // Tweets
+
   app.get("/", authenticated, (req, res) => res.redirect('/tweets'))
   app.get("/tweets", authenticated, tweetController.getTweets)
   app.post("/tweets", authenticated, tweetController.postTweet)
+  app.get('/tweets/:tweet_id/replies', authenticated, userController.getReplies)
+  app.post('/tweets/:tweet_id/replies', authenticated, userController.createReply)
   app.post("/tweets/:id/like", authenticated, tweetController.likeTweet)
   app.delete("/tweets/:id/unlike", authenticated, tweetController.unlikeTweet)
 
-  // Follow
+ // Follow
   app.post("/followships/:followingId", authenticated, userController.addFollow)
-  app.delete("/followships/:followingId", authenticated, userController.removeFollow)
-
+  app.delete("/followships/:followingId", authenticated, userController.deleteFollow)
 
 }

@@ -12,6 +12,7 @@
                 <h6>Follower: <span>{{followersAmount}}</span></h6>
                 <h6>Like: <span>{{likesAmount}}</span></h6>
             </div>
+
             {{#ifCond user.id currentUser.id}}
                 <a href="/users/{{currentUser.id}}/edit" class="btn btn-primary">Edit Profile</a>
             {{else}}
@@ -24,12 +25,13 @@
                     <button type="submit" class="btn btn-primary">Follow</button>
                 </form>
                 {{/if}}
+
             {{/ifCond}}
         </div>
         
         <div class="col-sm-8">
             <div class="row">
-r
+
                 {{#each followingsAndFollowers}}
                     <div class="card col-sm-6" style="width: 18rem;">
                         <div class="row">
@@ -39,7 +41,6 @@ r
                                     <h5 class="card-title">@<span>{{this.name}}</span></h5>
                                 </a>
                                 <p class="card-text">{{this.introduction}}</p>
-
                                 {{#ifCond this.id ../user.id}}
                                 {{else}}
                                     {{#if this.isFollowed}}
