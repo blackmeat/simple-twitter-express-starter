@@ -17,6 +17,7 @@ app.engine("handlebars", exhbs({
 app.set("view engine", "handlebars")
 
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use('/upload', express.static(__dirname + '/upload'))
 
 app.use(methodOverride("_method"))
 
