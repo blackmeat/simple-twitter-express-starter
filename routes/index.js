@@ -1,4 +1,6 @@
 const userController = require("../controllers/userController")
+const multer = require('multer')
+const upload = multer({ dest: 'temp/' })
 
 module.exports = (app, passport) => {
   const authenticated = (req, res, next) => {
@@ -24,8 +26,10 @@ module.exports = (app, passport) => {
   // Users
   app.get("/users/:id/tweets", authenticated, userController.getUserTweets)
   app.get('/users/:id/followings', authenticated, userController.followingsPage)
+  app.get('/users/:id/followers', authenticated, userController.followersPage)
+  app.get("/users/:id/edit", authenticated, userController.editUser) //取得修改頁面
+  app.post("/users/:id/edit", authenticated, upload.single('avatar'), userController.postUser) //寫入修改資料
 
-    app.get('/users/:id/followers', authenticated, userController.followersPage)
   // Tweets
   app.get("/", authenticated, (req, res) => { res.redirect("/tweets") })
   app.get("/tweets", (req, res) => { res.render("tweets") })
