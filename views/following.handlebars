@@ -29,6 +29,7 @@
         
         <div class="col-sm-8">
             <div class="row">
+r
                 {{#each followingsAndFollowers}}
                     <div class="card col-sm-6" style="width: 18rem;">
                         <div class="row">
@@ -38,15 +39,19 @@
                                     <h5 class="card-title">@<span>{{this.name}}</span></h5>
                                 </a>
                                 <p class="card-text">{{this.introduction}}</p>
-                                {{#if this.isFollowed}}
-                                <form action="/followships/{{this.id}}?_method=DELETE" method="POST">
-                                    <button type="submit" class="btn btn-danger">UnFollow</button>
-                                </form>
+
+                                {{#ifCond this.id ../user.id}}
                                 {{else}}
-                                <form action="/followships/{{this.id}}" method="POST">
-                                    <button type="submit" class="btn btn-primary">Follow</button>
-                                </form>
-                                {{/if}}
+                                    {{#if this.isFollowed}}
+                                        <form action="/followships/{{this.id}}?_method=DELETE" method="POST">
+                                            <button type="submit" class="btn btn-danger">UnFollow</button>
+                                        </form>
+                                    {{else}}
+                                        <form action="/followships/{{this.id}}" method="POST">
+                                            <button type="submit" class="btn btn-primary">Follow</button>
+                                        </form>
+                                    {{/if}}
+                                {{/ifCond}}
                             </div>
                         </div>
                     </div>
