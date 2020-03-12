@@ -84,6 +84,7 @@ let tweetController = {
       .then((like) => {
         like.destroy()
           .then((like) => {
+
             return res.redirect('back')
           })
       })

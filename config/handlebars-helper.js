@@ -5,7 +5,6 @@ module.exports = {
     }
     return options.inverse(this)
   },
-
   ifNoCond: function (a, b, options) { //用於自己不能follow自己
     if (a !== b) {
       return options.fn(this)
