@@ -24,9 +24,13 @@ module.exports = (app, passport) => {
   // Users
   app.get("/users/:id/tweets", authenticated, userController.getUserTweets)
   app.get('/users/:id/followings', authenticated, userController.followingsPage)
+  app.get('/users/:id/followers', authenticated, userController.followersPage)
   // Tweets
   app.get("/", authenticated, (req, res) => { res.redirect("/tweets") })
   app.get("/tweets", (req, res) => { res.render("tweets") })
+  app.get('/tweets/:tweet_id/replies', authenticated, userController.getReplies)
+  app.post('/tweets/:tweet_id/replies', authenticated, userController.createReply)
+
   // Follow
   app.post("/followships/:followingId", authenticated, userController.addFollow)
   app.delete("/followships/:followingId", authenticated, userController.deleteFollow)

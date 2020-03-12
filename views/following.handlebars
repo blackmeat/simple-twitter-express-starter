@@ -2,9 +2,9 @@
     <div class="row">
         <div class="col-sm-4">
             <div>
-                <img src="{{user.avatar}}" style="width: 300px" alt="">
-                <h2>{{user.name}}</h2>
-                <p>{{user.introduction}}</p>
+                <img src="{{currentUser.avatar}}" style="width: 300px" alt="">
+                <h2>{{currentUser.name}}</h2>
+                <p>{{currentUser.introduction}}</p>
             </div>
             <div>
                 <h6>Tweets: <span>{{tweetsAmount}}</span></h6>
@@ -12,12 +12,27 @@
                 <h6>Follower: <span>{{followingsAmonut}}</span></h6>
                 <h6>Like: <span>{{likesAmount}}</span></h6>
             </div>
-            <a href="/users/{{user.id}}/edit" class="btn btn-primary">Edit Profile</a>
+            
+
+            {{#ifCond user.id currentUser.id}}
+                <a href="/users/{{currentUser.id}}/edit" class="btn btn-primary">Edit Profile</a>
+            {{else}}
+                {{#if isFollowed}}
+                <form action="/followships/{{currentUser.id}}?_method=DELETE" method="POST">
+                    <button type="submit" class="btn btn-primary">UnFollow</button>
+                </form>
+                {{else}}
+                <form action="/followships/{{currentUser.id}}" method="POST">
+                    <button type="submit" class="btn btn-primary">Follow</button>
+                </form>
+                {{/if}}
+            {{/ifCond}}
         </div>
         
         <div class="col-sm-8">
             <div class="row">
-                {{#each followers}}
+                
+                {{#each followingsAndFollowers}}
                     <div class="card col-sm-6" style="width: 18rem;">
                         <div class="row">
                             <img src="{{this.avatar}}" class="card-img-top col-sm-4 mt-4" style="height: 100px">
@@ -26,9 +41,13 @@
                                     <h5 class="card-title">@<span>{{this.name}}</span></h5>
                                 </a>
                                 <p class="card-text">{{this.introduction}}</p>
+                                {{#if this.isFollowed}}
+                                
+                                {{else}}
                                 <form action="/followships/{{this.id}}?_method=DELETE" method="POST">
                                     <button type="submit">Unfollow</button>
                                 </form>
+                                {{/if}}
                             </div>
                         </div>
                     </div>

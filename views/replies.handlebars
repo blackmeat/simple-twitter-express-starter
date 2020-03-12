@@ -1,0 +1,72 @@
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4">
+            <div>
+                <img src="{{tweet.User.avatar}}" style="width: 300px" alt="">
+                <h2>{{tweet.User.name}}</h2>
+                <p>{{tweet.User.introduction}}</p>
+            </div>
+            <div>
+                <h6>Tweets: <span>{{tweetsAmount}}</span></h6>
+                <h6>Following: <span>{{followersAmount}}</span></h6>
+                <h6>Follower: <span>{{followingsAmonut}}</span></h6>
+                <h6>Like: <span>{{likesAmount}}</span></h6>
+            </div>
+            {{#ifCond user.id tweet.User.id}}
+                <a href="/users/{{tweet.User.id}}/edit" class="btn btn-primary">Edit Profile</a>
+            {{else}}
+                {{#if isFollowed}}
+                <form action="/followships/{{tweet.User.id}}?_method=DELETE" method="POST">
+                    <button type="submit" class="btn btn-primary">UnFollow</button>
+                </form>
+                {{else}}
+                <form action="/followships/{{tweet.User.id}}" method="POST">
+                    <button type="submit" class="btn btn-primary">Follow</button>
+                </form>
+                {{/if}}
+            {{/ifCond}}
+        </div>
+        
+        <div class="col-sm-8">
+            <div class="row">
+                <h2>Tweets</h2>
+                <div class="card col-sm-12" style="width: 18rem;">
+                    <div class="row">
+                        <img src="{{tweet.User.avatar}}" class="card-img-top col-sm-4" alt="">
+                        <div class="card-body col-sm-8">
+                            <a href="/users/{{tweet.User.id}}/tweets">
+                                <h5 class="card-title">@<span>{{tweet.User.name}}</span></h5>
+                            </a>
+                            <p class="card-text">{{tweet.description}}</p>
+                            <a href="/tweets/{{tweet.id}}/replies" class="btn btn-primary">Reply ( {{repliesAmount}} )</a>
+                            <form action="/tweets/{{tweets.id}}/like" method="POST">
+                                <button type="submit" class="btn btn-danger">Like ( {{tweetLikedAmount}} )</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2>Replies</h2>
+                {{#each replies}}
+                <div class="card col-sm-12 mb-4" style="width: 18rem;">
+                    <div class="row">
+                        <img src="{{this.User.avatar}}" class="card-img-top col-sm-4" alt="">
+                        <div class="card-body col-sm-8">
+                            <h5 class="card-title">
+                                <a href="/users/{{this.User.id}}/tweets">@ {{this.User.name}}</a>
+                                <span>{{this.User.createdAt}}</span>
+                            </h5>
+                            <p class="card-text" class="btn btn-primary">{{this.comment}}</p>
+                        </div>
+                    </div>
+                </div>
+                {{/each}}
+                <div class="card col-sm-12" style="width: 18rem;">
+                    <form action="/tweets/{{tweet.id}}/replies" method="POST">
+                        <textarea name="reply" id="reply" cols="60" rows="5"></textarea>
+                        <button type="submit">Reply</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
