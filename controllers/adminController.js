@@ -39,27 +39,48 @@ const adminContoller = {
   },
 
   getUsers: (req, res) => {
+    const forLike = []           //儲存每個人的like總數
     User
       .findAll({
+        order: [['id', 'ASC']]  //第一次用來取得總Like數
+      })
+      .then((Users) => {
+
+        Users = Users.map((d) => {   //計算每個User的總Like數
+          Tweet.findAll({ where: { UserId: d.id }, include: Like }).then((result) => {
+
+            let totalLike = 0
+            for (let i = 0; i < result.length; i++) {
+              totalLike += result[i].Likes.length
+            }
+            forLike.push({ 'totalLike': totalLike })  //推入forLike儲存
+            console.log(forLike)
+          })
+        })
+      })
+
+
+    // --------第二部分---------
+    User
+      .findAll({
+        order: [['id', 'ASC']],   //第二次取得Id,Name,Tweets,Followers,Following資料
         include: [
           Like,
           { model: Tweet, include: [Like] },
-          // 正在追蹤的
           { model: User, as: "followingId" },
-          // 所有追蹤者
           { model: User, as: "followerId" }
         ]
       })
       .then((Users) => {
+
         Users = Users.map((User) => ({
           ...User.dataValues,
           TweetCount: User.dataValues.Tweets.length,
           FollowerCount: User.dataValues.followerId.length,
           FollowingCount: User.dataValues.followingId.length
         }))
-        // 推播被like的數量(未完成)
-        console.log(Users)
-        res.render("admin/users", { Users })
+        res.render("admin/users", { Users, forLike }) //因這兩次取資料時，皆有經過相同的排序方法。所以在render時順序一致!
+
       })
   }
 }
