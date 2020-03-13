@@ -11,7 +11,7 @@ const adminContoller = {
         order: [["createdAt", "DESC"]],
         include: [
           User,
-          Reply,
+          {model: Reply  /*order: [["createdAt", "ASC"]]*/ }
         ]
       })
       .then((tweets) => {
@@ -19,9 +19,10 @@ const adminContoller = {
         tweets = tweets.map((tweet) => ({
           ...tweet.dataValues,
           description: tweet.dataValues.description.split("").length >= 50 ? tweet.dataValues.description.substring(0, 50) + "....." : tweet.dataValues.description,
+          // 把推文內的Replies按id排序，接著取第一筆(本來想在前面註解處引入Reply就排序，可是好像不行)
+          Replies: tweet.Replies.sort((a,b) => b.id - a.id)[0] 
         }))
-        console.log(tweets)
-        // 每篇文最新回覆資料（未完成）
+        console.log(tweets[0])
         res.render("admin/tweets", { tweets })
       })
   },
