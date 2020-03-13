@@ -20,8 +20,8 @@
     <tr>
       <th scope="row">{{this.id}}</th>
       <td>{{this.User.name}}</td>
-      <td>{{this.description}}</td>
-      <td>{{this.Replies.comment}}</td>
+      <td>{{subString this.description}}</td>
+      <td>{{subString this.Replies.comment}}</td>
       <td>
         <form action="/admin/tweets/{{this.id}}?_method=DELETE" method="POST" style="display: inline;">
           <button type="submit" class="btn btn-link">Delete</button>

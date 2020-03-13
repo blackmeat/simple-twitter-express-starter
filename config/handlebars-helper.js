@@ -11,7 +11,6 @@ module.exports = {
     }
     return options.inverse(this)
   },
-
   date: function (a) {
     const year = a.getFullYear()
     const month = a.getMonth() + 1
@@ -19,5 +18,8 @@ module.exports = {
     const hour = a.getHours()
     const minute = a.getMinutes()
     return `${year}-${month}-${date},${hour}:${minute}`
-  }
+  },
+  subString: function (a) {
+    return String(a).split("").length >= 50 ? a.substring(0, 50) + "....." : a
+  },
 }
