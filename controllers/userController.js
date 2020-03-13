@@ -120,6 +120,7 @@ const userController = {
         res.redirect("back")
       })
   },
+
   followingsPage: (req, res) => {
     // 找到這一頁所屬的擁有者
     User.findOne({
@@ -189,6 +190,7 @@ const userController = {
         return res.render('following', data)
       })
   },
+
   editUser: (req, res) => {
     if (req.user.id == req.params.id) {
       return User.findByPk(req.params.id).then(user => {
@@ -201,6 +203,7 @@ const userController = {
       })
     }
   },
+
   postUser: (req, res) => {
     if (req.user.id == req.params.id) {    //若非該使用者送出請求，重新導向目前使用者的profile
       if (!req.body.name) {
@@ -225,8 +228,7 @@ const userController = {
                 })
             })
         })
-      }
-      else
+      } else {
         return User.findByPk(req.params.id)          //若修改時沒上傳圖片
           .then((user) => {
             user.update({
@@ -237,15 +239,16 @@ const userController = {
               .then((user) => {
                 req.flash('success_messages', 'user profile was successfully to update')
                 res.redirect(`/users/${user.id}/tweets`)
-
               })
           })
+      }
     } else {
       return User.findByPk(req.params.id).then(user => {
         return res.redirect(`/users/${user.id}/tweets`)
       })
     }
   },
+
   getuserlikes: (req, res) => {
     Tweet.findAll({ order: [['createdAt', 'DESC']], include: [User, { model: Reply, include: [User] }, { model: Like, include: [User] }] }).then(result => {   //最新的tweet顯示在前面
       const data = result.map(r => ({
@@ -283,6 +286,7 @@ const userController = {
         })
     })
   },
+
   getReplies: (req, res) => {
     // 先撈出該筆tweet
     Tweet.findByPk(req.params.tweet_id, {
@@ -315,11 +319,13 @@ const userController = {
             likesAmount: user.Likes.length,
             isFollowed: isFollowed,
             isLiked: tweet.Likes.map(d => d.UserId).includes(req.user.id)
+
           }
           return res.render('replies', data)
         })
     })
   },
+
   createReply: (req, res) => {
     if (!req.body.reply) {
       req.flash('error_messages', '請輸入留言')
@@ -333,5 +339,6 @@ const userController = {
         res.redirect('back')
       })
   }
+
 }
 module.exports = userController
