@@ -22,7 +22,6 @@ const adminContoller = {
           // 把推文內的Replies按id排序，接著取第一筆(本來想在前面註解處引入Reply就排序，可是好像不行)
           Replies: tweet.Replies.sort((a, b) => b.id - a.id)[0]
         }))
-        console.log(tweets[0].Replies)
         res.render("admin/tweets", { tweets })
       })
   },
@@ -46,49 +45,50 @@ const adminContoller = {
   },
 
   getUsers: (req, res) => {
-    const forLike = []           //儲存每個人的like總數
+    let forLike = []           //儲存每個人的like總數
     User
       .findAll({
         order: [['id', 'ASC']]  //第一次用來取得總Like數
       })
       .then((Users) => {
-
         Users = Users.map((d) => {   //計算每個User的總Like數
-          Tweet.findAll({ where: { UserId: d.id }, include: Like }).then((result) => {
-
-            let totalLike = 0
-            for (let i = 0; i < result.length; i++) {
-              totalLike += result[i].Likes.length
-            }
-            forLike.push({ 'totalLike': totalLike })  //推入forLike儲存
-            console.log(forLike)
-          })
+          Tweet
+            .findAll({ where: { UserId: d.id }, include: Like })
+            .then((result) => {
+              let totalLike = 0
+              for (let i = 0; i < result.length; i++) {
+                totalLike += result[i].Likes.length
+              }
+              forLike.push({ 'TweetCount': result.length, 'totalLike': totalLike })
+            })
         })
+        return forLike
+      })
+      .then((forLike) => {
+        // --------第二部分---------
+        User
+          .findAll({
+            order: [['id', 'ASC']],   //第二次取得Id,Name,Tweets,Followers,Following資料
+            include: [
+              Like,
+              { model: Tweet, include: [Like] },
+              { model: User, as: "followingId" },
+              { model: User, as: "followerId" }
+            ]
+          })
+          .then((Users) => {
+            Users = Users.map((User) => ({
+              ...User.dataValues,
+              TweetCount: User.dataValues.Tweets.length,
+              FollowerCount: User.dataValues.followerId.length,
+              FollowingCount: User.dataValues.followingId.length,
+            }))
+            Users = Users.sort((a, b) => b.TweetCount - a.TweetCount)
+            forLike = forLike.sort((a, b) => b.TweetCount - a.TweetCount)
+            res.render("admin/users", { Users, forLike }) //因這兩次取資料時，皆有經過相同的排序方法。所以在render時順序一致!
+          })
       })
 
-
-    // --------第二部分---------
-    User
-      .findAll({
-        order: [['id', 'ASC']],   //第二次取得Id,Name,Tweets,Followers,Following資料
-        include: [
-          Like,
-          { model: Tweet, include: [Like] },
-          { model: User, as: "followingId" },
-          { model: User, as: "followerId" }
-        ]
-      })
-      .then((Users) => {
-
-        Users = Users.map((User) => ({
-          ...User.dataValues,
-          TweetCount: User.dataValues.Tweets.length,
-          FollowerCount: User.dataValues.followerId.length,
-          FollowingCount: User.dataValues.followingId.length
-        }))
-        res.render("admin/users", { Users, forLike }) //因這兩次取資料時，皆有經過相同的排序方法。所以在render時順序一致!
-
-      })
   }
 }
 
