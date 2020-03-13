@@ -33,9 +33,15 @@ const adminContoller = {
       .then((tweet) => {
         // 刪除該篇推播、回覆、點讚相關資料
         tweet.destroy()
-        Like.destroy({ where: { TweetId: tweet.id } })
-        Reply.destroy({ where: { TweetId: tweet.id } })
-        res.redirect("back")
+              .then(tweet => {
+                Like.destroy({where: {TweetId: tweet.id}})
+                    .then(like => {
+                      Reply.destroy({ where: { TweetId: tweet.id } })
+                            .then(reply => {
+                              res.redirect("back")
+                            })
+                    })
+              })
       })
   },
 
