@@ -59,7 +59,9 @@ let tweetController = {
 
     return Tweet.create({
       description: req.body.text,
-      UserId: req.user.id
+      UserId: req.user.id,
+      url: req.body.checkin_url,
+      place: req.body.checkin_name
     })
       .then((Tweet) => {
         res.redirect("/tweets")
