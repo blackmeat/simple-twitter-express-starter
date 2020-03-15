@@ -11,8 +11,21 @@ ws.onclose = () => {
     console.log('close connection')
 }
 
+const messagesPrint = document.querySelector('#messagesPrint')
+const messageForm = document.querySelector('#messageForm')
+const messageInput = document.querySelector('#messageInput')
+let messagesStored = []
+let allHtml = ``
 // 接收Server發出的訊息
 ws.onmessage = event => {
-    // 如果要接收Server送出來的data值，則是要用event.data去拿
-    console.log(event)
+    // 把拿到的訊息送去HTML印出
+    let eachHtml = `<li>${event.data}</li>`
+    allHtml += eachHtml
+    messagesPrint.children[0].innerHTML = allHtml
 }
+
+messageForm.addEventListener('submit', event => {
+    event.preventDefault()
+    ws.send(messageInput.value)
+})
+
