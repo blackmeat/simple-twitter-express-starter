@@ -53,4 +53,8 @@ module.exports = (app, passport) => {
   app.delete("/admin/tweets/:id", authenticatedAdmin, adminController.deleteTweet)
   app.get("/admin/users", authenticatedAdmin, adminController.getUsers)
 
+  // privateChat
+  app.get('/chat', (req, res) => {
+    res.render('chat')
+  })
 }
