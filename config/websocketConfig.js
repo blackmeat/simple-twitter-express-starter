@@ -6,7 +6,13 @@ const websocket = {
       let online = 0 // 在線人數
       
       //把app交給SocketServer開啟 WebSocket 的服務
-      const wss = new SocketServer({ server })
+      const wss = new SocketServer({ server , verifyClient: yan})
+      function yan(info) {
+        console.log(info.req.headers.cookie)
+        let infoUrl = info.req.url
+        console.log('通過連接'+ infoUrl)
+        return true
+      } 
 
       // 當WebSocket從外面連結時執行
       wss.on('connection', (ws, req) => {
@@ -21,7 +27,7 @@ const websocket = {
         if (chatHost) {
           user[chatHost] = ws
         }
-        console.log(user)
+        // console.log(user)
         let chattedUser = url.split('/')[3] //被聊天的對象的id
         
         // [待開發]首次連接就先去撈歷史訊息給Client
@@ -30,7 +36,6 @@ const websocket = {
         ws.on('message', data => {
           console.log('收到' + url + '的消息'+ data)
           // 判斷有沒有被聊天的對象
-          console.log(user)
           if(chattedUser) {
             // 會去查看被聊天的對象有沒有被存在user裡了
             if (user[chattedUser]) {
@@ -40,8 +45,10 @@ const websocket = {
               用console發現好像是對方斷線的時候，會自動連動更新原本存在user裡的readyState?
               */
               if (user[chattedUser].readyState === 1) {
-                user[chattedUser].send(data)
+                user[chattedUser].send(data) // 把訊息送給被聊天的對象
+                ws.send(data) // 也把訊息送回給發起聊天的人
                 ws.send('發送成功')
+                
               } else {
                 ws.send('對方斷線')
               }
