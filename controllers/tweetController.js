@@ -5,6 +5,7 @@ const Reply = db.Reply
 const Like = db.Like
 const Followship = db.Followship
 const User = db.User
+const helpers = require("../_helpers")
 
 
 let tweetController = {
@@ -19,12 +20,12 @@ let tweetController = {
         description: r.dataValues.description.substring(0, 50),
         reply: r.dataValues.Replies.length, //計算reply數量
         like: r.dataValues.Likes.length, //計算like數量
-        isLiked: r.Likes.map(d => d.UserId).includes(req.user.id)
+        isLiked: r.Likes.map(d => d.UserId).includes(helpers.getUser(req).id)
       }))
 
       User.findAll({
         include: [
-          { model: User, as: 'followerId' }
+          { model: User, as: 'Followers' }
         ]
       }).then(users => {
         // console.log(users[0].id)
@@ -33,16 +34,16 @@ let tweetController = {
         users = users.map(user => ({
           ...user.dataValues,
           // 計算追蹤者人數
-          FollowerCount: user.followerId.length,
+          FollowerCount: user.Followers.length,
           // 判斷目前登入使用者是否已追蹤該 User 物件
-          isFollowed: user.followerId.map(d => d.id).includes(req.user.id)
+          isFollowed: user.Followers.map(d => d.id).includes(helpers.getUser(req).id)
         }))
         // 依追蹤者人數排序清單
         users = users.sort((a, b) => b.FollowerCount - a.FollowerCount).slice(0, 10)
         return res.render('tweets', {
           tweets: data,
           users: JSON.parse(JSON.stringify(users)),
-          nowUser: req.user.id      //用於判定自己不能follow自己
+          nowUser: helpers.getUser(req).id      //用於判定自己不能follow自己
         })
       })
     })
@@ -59,7 +60,7 @@ let tweetController = {
 
     return Tweet.create({
       description: req.body.text,
-      UserId: req.user.id
+      UserId: helpers.getUser(req).id,
     })
       .then((Tweet) => {
         res.redirect("/tweets")
@@ -67,7 +68,7 @@ let tweetController = {
   },
   likeTweet: (req, res) => {
     return Like.create({
-      UserId: req.user.id,
+      UserId: helpers.getUser(req).id,
       TweetId: req.params.id
     })
       .then((like) => {
@@ -75,18 +76,15 @@ let tweetController = {
       })
   },
   unlikeTweet: (req, res) => {
-    return Like.findOne({
+    Like.findOne({
       where: {
-        UserId: req.user.id,
+        UserId: helpers.getUser(req).id,
         TweetId: req.params.id
       }
     })
       .then((like) => {
         like.destroy()
-          .then((like) => {
-
-            return res.redirect('back')
-          })
+        return res.redirect('back')
       })
   }
 }
