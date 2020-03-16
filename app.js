@@ -40,40 +40,7 @@ app.use((req, res, next) => {
 // 要把原本app.listen包起來
 const server = app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
-// websocket設定
-const SocketServer = require('ws').Server
-//將 把app交給SocketServer開啟 WebSocket 的服務
-const wss = new SocketServer({ server })
-
-// 當WebSocket從外面連結時執行
-wss.on('connection', ws => {
-  console.log('Client connected')
-  /* 如果不想只等Client發訊息，Server才回覆，可以用setInterval一直主動發訊息給Client(下面示範一直發出當前時間)
-  const sendNowTime = setInterval(()=>{
-    ws.send(String(new Date()))
-  }, 1000)
-  */
-  // 對message進行監聽，接收從Client送進來的訊息
-  ws.on('message', data => {
-    /* data是Client發送的訊息，接著把訊息原封不動送回去給Client，但是這個只能針對個人，如果A傳給server，server會再回傳給A而已
-    ws.send(data)
-    */ 
-    // 承上，如果需要傳給所有在聊天室的人則要用wss.clients
-    let clients = wss.clients
-      // 聊天室裡會有很多人，所以用迴圈發訊息給所有Client
-      clients.forEach(client=> {
-        client.send(data)
-      })
-  })
-  
-  // 連結關閉時執行
-  ws.on('close', () => {
-    console.log('Close connected ')
-
-    // 最後把所有的聊天訊息存到資料庫
-
-  })
-})
+require('./config/websocketConfig').websocket(server)
 
 require("./routes/index")(app, passport)
 module.exports = app

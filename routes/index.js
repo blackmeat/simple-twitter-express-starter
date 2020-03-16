@@ -54,7 +54,8 @@ module.exports = (app, passport) => {
   app.get("/admin/users", authenticatedAdmin, adminController.getUsers)
 
   // privateChat
-  app.get('/chat', (req, res) => {
+  // :hostChatId表示發起聊天的人(即當前登入的使用者)， :id表示被聊天的對象
+  app.get('/chat/:hostChatId/:id', /*authenticated,*/ (req, res) => {
     res.render('chat')
   })
 }

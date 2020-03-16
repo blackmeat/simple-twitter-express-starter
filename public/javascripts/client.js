@@ -1,5 +1,8 @@
+const url = 'ws://' + window.location.href.substring(7)
+console.log(url)
+
 // 使用WebSocket的網址向Server開啟連結
-let ws = new WebSocket('ws://localhost:3000/')
+let ws = new WebSocket(url)
 
 // 開啟連結後執行的動作
 ws.onopen = () => {
