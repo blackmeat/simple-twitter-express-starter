@@ -75,9 +75,9 @@ let tweetController = {
             .findAll()
             .then((hashtags) => {
               let hashtagsName = hashtags.map(hashtag => hashtag.name)
-              if (hashtagsName.every(name => name !== hashTag[i])) {
+              if (hashtagsName.every(name => name !== hashTag[i].replace(/\s*/g, ""))) {
                 HashTag.create({
-                  name: hashTag[i]
+                  name: hashTag[i].replace(/\s*/g, "")
                 })
                   .then((HashTag) => {
                     Tag.create({
