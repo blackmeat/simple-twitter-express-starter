@@ -25,6 +25,7 @@ module.exports = (app, passport) => {
   app.get("/signin", userController.signInPage)
   app.post("/signin", passport.authenticate('local', { failureRedirect: '/signin', failureFlash: true }), userController.signIn)
   app.get("/logout", userController.logout)
+
   // Users
   app.get("/users/:id/tweets", authenticated, userController.getUserTweets)
   app.get('/users/:id/followings', authenticated, userController.followingsPage)
@@ -32,9 +33,9 @@ module.exports = (app, passport) => {
   app.get("/users/:id/edit", authenticated, userController.editUser) //取得修改頁面
   app.get("/users/:id/likes", authenticated, userController.getuserlikes)
   app.post("/users/:id/edit", authenticated, upload.single('avatar'), userController.postUser) //寫入修改資料
+  const hashtagController = require("../controllers/hashtagController")
 
   // Tweets
-
   app.get("/", authenticated, (req, res) => res.redirect('/tweets'))
   app.get("/tweets", authenticated, tweetController.getTweets)
   app.post("/tweets", authenticated, tweetController.postTweet)
@@ -53,4 +54,6 @@ module.exports = (app, passport) => {
   app.delete("/admin/tweets/:id", authenticatedAdmin, adminController.deleteTweet)
   app.get("/admin/users", authenticatedAdmin, adminController.getUsers)
 
+  // hashtag
+  app.get("/hashtags/:id/tweets", authenticated, hashtagController.getHashtagTweets)
 }

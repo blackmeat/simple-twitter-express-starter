@@ -1,0 +1,22 @@
+<div class="container my-4">
+  <div class="text-center">
+    <h1>#{{HashtagName}}</h1>
+    <div class="col-12 row my-4">
+      {{#each Tags}}
+      <div class="col-3 my-3">
+        <div class="card">
+          <a href="/users/{{this.Tweet.User.id}}/tweets">
+            <img src="{{this.Tweet.User.avatar}}" class="card-img-top" alt="大頭貼" width="100px" height="200px">
+          </a>
+          <div class="card-body">
+            <a href="/tweets/{{this.Tweet.id}}/replies">
+              <h5 class="card-title">{{this.Tweet.User.name}}</h5>
+              <p class="card-text">{{subString this.Tweet.description}}</p>
+            </a>
+          </div>
+        </div>
+      </div>
+      {{/each}}
+    </div>
+  </div>
+</div>
