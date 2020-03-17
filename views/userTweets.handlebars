@@ -1,17 +1,25 @@
 <div class="container my-3 ">
-  <div class="row col-12">
+  <div class="row">
     <div class="col-4">
       <div class="col-8 my-2">
-        <img src="{{User.avatar}}" alt="大頭貼" width="200px" height="200px">
+        <img src="{{User.avatar}}" class="rounded" alt="大頭貼" width="200px" height="200px">
         <div class="my-3">
-          <h3>{{User.name}}</h3>
+          <h2>{{User.name}}</h2>
           <p style="word-wrap: break-word;">{{User.introduction}}</p>
         </div>
         <div class="my-3">
-          <h4>Tweets {{User.TweetCount}}</h4>
-          <h4>Following {{User.FollowingCount}}</h4>
-          <h4>Follower {{User.FollowerCount}}</h4>
-          <h4>Like {{User.LikeCount}}</h4>
+          <a href="/users/{{User.id}}/tweets">
+            <h3>Tweets：{{User.TweetCount}}</h3>
+          </a>
+          <a href="/users/{{User.id}}/followings">
+            <h3>Following：{{User.FollowingCount}}</h3>
+          </a>
+          <a href="/users/{{User.id}}followers">
+            <h3>Follower：{{User.FollowerCount}}</h3>
+          </a>
+          <a href="/users/{{User.id}}/likes">
+            <h3>Like：{{User.LikeCount}}</h3>
+          </a>
         </div>
         {{#ifCond User.id userInfo.id}}
         <div class="text-center">
@@ -32,7 +40,6 @@
           <input type="hidden" name="id" value="{{User.id}}">
         </form>
         {{/if}}
-
         {{/ifCond}}
       </div>
     </div>
@@ -43,13 +50,17 @@
         <div class="card-body row">
           {{!-- card左側 --}}
           <div class="col-4">
-            <img src="{{../User.avatar}}" alt="大頭貼" width="180px" height="120px">
+            <img src="{{../User.avatar}}" class="rounded" alt="大頭貼" width="180px" height="150px">
           </div>
           {{!-- card右側 --}}
           <div class="col-8">
-            <a href="/users/{{this.User.id}}/tweets">
-              <h5>{{this.User.name}}<span>,{{date this.createdAt}}</span></h5>
-            </a>
+            <div class="row">
+              <a href="/users/{{this.User.id}}/tweets">
+                <h5>{{this.User.name}}</h5>
+              </a>
+
+              <span style="font-size: 20px;">&nbsp&nbsp{{date this.createdAt}}</span>
+            </div>
             <p>
               {{this.description}}
             </p>

@@ -63,7 +63,7 @@ let tweetController = {
     let hashTag = req.body.description.split("#").slice(1)
     console.log(hashTag)
     if (req.body.description.includes("#")) {
-      req.body.text = req.body.description.split("#")[0]
+      req.body.description = req.body.description.split("#")[0]
     }
 
     return Tweet.create({
