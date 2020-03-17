@@ -5,12 +5,10 @@ const Reply = db.Reply
 const Followship = db.Followship
 const Tweet = db.Tweet
 const Like = db.Like
-
-const helpers = require("../_helpers")
-
 const Hashtag = db.Hashtag
 const Tag = db.Tag
 
+const helpers = require("../_helpers")
 const fs = require('fs')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
@@ -98,9 +96,9 @@ const userController = {
         const Tweets = User.Tweets.map((Tweet) => ({
           ...Tweet.dataValues,
           LikeCount: Tweet.dataValues.Likes.length,
-          ReplyCount: Tweet.dataValues.Replies.length,
-          isLiked: Tweet.dataValues.Likes.map(d => d.UserId).includes(helpers.getUser(req).id),
+          ReplyCount: Tweet.dataValues.Replies.length,   
           Hashtag: Tweet.dataValues.Tags.map(d => d.Hashtag).map(hashtag => ({ id: hashtag.id, name: hashtag.name }))
+          isLiked: Tweet.dataValues.Likes.map(d => d.UserId).includes(helpers.getUser(req).id)
         }))
         // console.log(User)
         // console.log(Tweets)
