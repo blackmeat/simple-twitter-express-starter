@@ -1,20 +1,20 @@
 const userController = require("../controllers/userController")
 const tweetController = require("../controllers/tweetController")
 const adminController = require("../controllers/adminController")
-
+const helpers = require("../_helpers")
 const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
 
 module.exports = (app, passport) => {
   const authenticated = (req, res, next) => {
-    if (req.isAuthenticated()) {
+    if (helpers.ensureAuthenticated(req)) {
       return next()
     }
     res.redirect('/signin')
   }
   const authenticatedAdmin = (req, res, next) => {
-    if (req.isAuthenticated()) {
-      if (req.user.role === "admin") { return next() }
+    if (helpers.ensureAuthenticated(req)) {
+      if (helpers.getUser(req).role === "admin") { return next() }
       return res.redirect('/')
     }
     res.redirect('/signin')
@@ -55,7 +55,8 @@ module.exports = (app, passport) => {
 
   // privateChat
   // :hostChatId表示發起聊天的人(即當前登入的使用者)， :id表示被聊天的對象
-  app.get('/chat/:hostChatId/:id', /*authenticated,*/ (req, res) => {
+  app.get('/chat/:hostChatId/:id', /*authenticated,*/(req, res) => {
+    console.log(helpers.getUser(req))
     res.render('chat')
   })
 }
