@@ -60,7 +60,7 @@ let tweetController = {
 
     return Tweet.create({
       description: req.body.text,
-      UserId: helpers.getUser(req).id,
+      UserId: helpers.getUser(req).id
     })
       .then((Tweet) => {
         res.redirect("/tweets")
