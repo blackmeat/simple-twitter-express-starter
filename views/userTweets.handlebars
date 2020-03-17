@@ -2,7 +2,7 @@
   <div class="row col-12">
     <div class="col-4">
       <div class="col-8 my-2">
-        <img src="{{User.avatar}}" alt="大頭貼" width="200px" height="200px">
+        <img src="{{User.avatar}}" class="rounded" alt="大頭貼" width="200px" height="200px">
         <div class="my-3">
           <h3>{{User.name}}</h3>
           <p style="word-wrap: break-word;">{{User.introduction}}</p>
@@ -43,20 +43,27 @@
         <div class="card-body row">
           {{!-- card左側 --}}
           <div class="col-4">
-            <img src="{{../User.avatar}}" alt="大頭貼" width="180px" height="120px">
+            <img src="{{../User.avatar}}" class="rounded" alt="大頭貼" width="180px" height="150px">
           </div>
           {{!-- card右側 --}}
           <div class="col-8">
-            <a href="/users/{{this.User.id}}/tweets">
-              <h5>{{this.User.name}}<span>,{{date this.createdAt}}</span></h5>
-            </a>
+            {{!-- 名稱＋時間 --}}
+            <div class="row">
+              <a href="/users/{{this.User.id}}/tweets">
+                <h5>{{this.User.name}}</h5>
+              </a>
+              <h5>&nbsp&nbsp{{date this.createdAt}}</h5>
+            </div>
+            {{!-- 內容 --}}
             <p>
               {{this.description}}
             </p>
             <div class="row">
+              {{!-- Reply --}}
               <div style="float: left;">
                 <a href="/tweets/{{this.id}}/replies" class="btn btn-link">Reply({{this.ReplyCount}})</a>
               </div>
+              {{!-- Like --}}
               <div style="float: left;">
                 {{#if this.isLiked }}
                 <form action="/tweets/{{this.id}}/unlike?_method=DELETE" method="POST">
@@ -70,6 +77,7 @@
               </div>
             </div>
             <hr>
+            {{!-- Hashtag --}}
             <div class="row">
               {{#each this.Hashtag}}
               <div class="mx-2" style="float: left;font-size:20px ">
