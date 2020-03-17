@@ -55,10 +55,10 @@ module.exports = (app, passport) => {
 
   // privateChat
   // :hostChatId表示發起聊天的人(即當前登入的使用者)， :id表示被聊天的對象
-  app.get('/chat/:hostChatId/:id', /*authenticated,*/(req, res) => {
-    console.log(req.user)
-    console.log(req.params.hostChatId)
-    if (req.user === req.params.hostChatId) {
+  app.get('/chat/:hostChatId/:id', authenticated, (req, res) => {
+    console.log(Number(req.user.id))
+    console.log(Number(req.params.hostChatId))
+    if (Number(req.user.id) === Number(req.params.hostChatId)) {
       res.render('chat')
     } else {
       return res.redirect('back')
