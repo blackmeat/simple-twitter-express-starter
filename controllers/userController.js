@@ -5,7 +5,7 @@ const Reply = db.Reply
 const Followship = db.Followship
 const Tweet = db.Tweet
 const Like = db.Like
-
+const helpers = require("../_helpers")
 const fs = require('fs')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
@@ -68,9 +68,9 @@ const userController = {
           // 這位用戶的推文包括推文的回覆、喜歡、使用者資訊
           { model: Tweet, limit: 6, order: [["createdAt", "DESC"]], include: [Reply, Like, User] },
           // 這位用戶的追蹤者
-          { model: User, as: "followerId" },
+          { model: User, as: "Followers" },
           // 這位用戶正在追蹤的人數
-          { model: User, as: "followingId" }
+          { model: User, as: "Followings" }
         ]
       })
       .then((User) => {
@@ -79,9 +79,9 @@ const userController = {
           ...User.dataValues,
           LikeCount: User.Likes.length,
           TweetCount: User.Tweets.length,
-          FollowerCount: User.followerId.length,
-          FollowingCount: User.followingId.length,
-          isFollowing: req.user.followingId.map(d => d.id).includes(User.id)
+          FollowerCount: User.Followers.length,
+          FollowingCount: User.Followings.length,
+          isFollowing: helpers.getUser(req).Followings.map(d => d.id).includes(User.id)
         }
 
         // 每個推文的回覆數和讚數
@@ -89,7 +89,7 @@ const userController = {
           ...Tweet.dataValues,
           LikeCount: Tweet.dataValues.Likes.length,
           ReplyCount: Tweet.dataValues.Replies.length,
-          isLiked: Tweet.dataValues.Likes.map(d => d.UserId).includes(req.user.id)
+          isLiked: Tweet.dataValues.Likes.map(d => d.UserId).includes(helpers.getUser(req).id)
         }))
         // console.log(User)
         // console.log(Tweets)
@@ -98,20 +98,27 @@ const userController = {
   },
 
   addFollow: (req, res) => {
-    Followship.create({
-      followerId: req.user.id,
-      followingId: req.params.followingId
-    })
-      .then((followship) => {
-        res.redirect("back")
+
+    if (Number(helpers.getUser(req).id) !== Number(req.body.id)) {
+      Followship.create({
+        followerId: Number(helpers.getUser(req).id),
+        followingId: Number(req.body.id)
       })
+        .then((followship) => {
+          return res.redirect("back")
+        })
+    } else {
+      return res.redirect(200, "back")   //改這
+
+    }
+
   },
 
   deleteFollow: (req, res) => {
     Followship
       .findOne({
         where: {
-          followerId: req.user.id,
+          followerId: helpers.getUser(req).id,
           followingId: req.params.followingId
         }
       })
@@ -126,30 +133,30 @@ const userController = {
     User.findOne({
       where: { id: req.params.id },
       include: [
-        { model: User, as: 'followerId' },
-        { model: User, as: 'followingId' },
+        { model: User, as: 'Followers' },
+        { model: User, as: 'Followings' },
         Tweet,
         Like
       ]
     })
       .then(user => {
-        const followings = user.followingId.map(follower => {
+        const followings = user.Followings.map(follower => {
           return {
             ...follower.dataValues,
             // 拿出現在登入的使用者追蹤了哪些人，並比對當前頁面擁有者追蹤的人是否在裡面
-            isFollowed: req.user.followingId.map(d => d.id).includes(follower.id)
+            isFollowed: helpers.getUser(req).Followings.map(d => d.id).includes(follower.id)
           }
         })
 
         const data = {
           currentUser: user,
           tweetsAmount: user.Tweets.length,
-          followersAmount: user.followerId.length,
-          followingsAmonut: user.followingId.length,
+          followersAmount: user.Followers.length,
+          followingsAmonut: user.Followings.length,
           likesAmount: user.Likes.length,
           followingsAndFollowers: followings,
           paramsId: Number(req.params.id),
-          isFollowed: req.user.followingId.map(d => d.id).includes(user.id)
+          isFollowed: helpers.getUser(req).Followings.map(d => d.id).includes(user.id)
         }
         return res.render('following', data)
       })
@@ -160,39 +167,38 @@ const userController = {
     User.findOne({
       where: { id: req.params.id },
       include: [
-        { model: User, as: 'followerId' },
-        { model: User, as: 'followingId' },
+        { model: User, as: 'Followers' },
+        { model: User, as: 'Followings' },
         Tweet,
         Like
       ]
     })
       .then(user => {
-        console.log(req.user.followerId.id)
         // 撈出當前頁面擁有者被誰追蹤，並重構資料把isFollowed塞進去
-        const followers = user.followerId.map(follower => {
+        const followers = user.Followers.map(follower => {
           return {
             ...follower.dataValues,
             // 拿出現在登入的使用者追蹤了哪些人，並比對當前頁面擁有者的追蹤者是否在裡面
-            isFollowed: req.user.followingId.map(d => d.id).includes(follower.id)
+            isFollowed: helpers.getUser(req).Followings.map(d => d.id).includes(follower.id)
           }
         })
         const data = {
           currentUser: user,
           tweetsAmount: user.Tweets.length,
-          followersAmount: user.followerId.length,
-          followingsAmonut: user.followingId.length,
+          followersAmount: user.Followers.length,
+          followingsAmonut: user.Followings.length,
           likesAmount: user.Likes.length,
           followingsAndFollowers: followers,
           paramsId: Number(req.params.id),
           // 拿出現在登入的使用者追蹤了哪些人，判斷當前頁面擁有者是否在裡面
-          isFollowed: req.user.followingId.map(d => d.id).includes(user.id)
+          isFollowed: helpers.getUser(req).Followings.map(d => d.id).includes(user.id)
         }
         return res.render('following', data)
       })
   },
 
   editUser: (req, res) => {
-    if (req.user.id == req.params.id) {
+    if (helpers.getUser(req).id == req.params.id) {
       return User.findByPk(req.params.id).then(user => {
         console.log(user)
         return res.render('profileedit', { user: JSON.parse(JSON.stringify(user)) }) //修改頁面
@@ -205,7 +211,7 @@ const userController = {
   },
 
   postUser: (req, res) => {
-    if (req.user.id == req.params.id) {    //若非該使用者送出請求，重新導向目前使用者的profile
+    if (helpers.getUser(req).id == req.params.id) {    //若非該使用者送出請求，重新導向目前使用者的profile
       if (!req.body.name) {
         req.flash('error_messages', "name didn't exist")
         return res.redirect('back')
@@ -258,14 +264,19 @@ const userController = {
         reply: r.dataValues.Replies.length, //計算reply數量
         like: r.dataValues.Likes.length, //計算like數量
         isLiked: r.Likes.map(d => d.UserId).includes(Number(req.params.id)),
-        iLiked: r.Likes.map(d => d.UserId).includes(Number(req.user.id))
+        iLiked: r.Likes.map(d => d.UserId).includes(Number(helpers.getUser(req).id))
       }))
 
       User.findOne({
         where: {
           id: req.params.id,
         },
-        include: [Tweet, Like, { model: User, as: 'followerId' }, { model: User, as: 'followingId' }]
+        include: [
+          Tweet,
+          Like,
+          { model: User, as: 'Followers' },
+          { model: User, as: 'Followings' }
+        ]
       })
         .then(user => {
           console.log(user)
@@ -273,15 +284,15 @@ const userController = {
           // 整理 users 資料
           user = ({
             ...user.dataValues,
-            FollowerCount: user.followerId.length,
-            FollowingCount: user.followingId.length,
+            FollowerCount: user.Followers.length,
+            FollowingCount: user.Followings.length,
             TweetCount: user.Tweets.length,
             LikeCount: user.Likes.length
           })
           return res.render('likepage', {
             tweets: data,
             user: user,
-            signinUser: req.user.id
+            signinUser: helpers.getUser(req).id
           })
         })
     })
@@ -299,26 +310,26 @@ const userController = {
       // 再撈出該筆tweet發文者資料，主要是給頁面左半算數量使用
       User.findByPk(tweet.User.id, {
         include: [
-          { model: User, as: 'followerId' },
-          { model: User, as: 'followingId' },
+          { model: User, as: 'Followers' },
+          { model: User, as: 'Followings' },
           Tweet,
           Like
         ]
       })
         .then(user => {
           // 檢查該筆tweet的發文者有沒有被現在登入的使用者follow過(供頁面左半Follow或Unfollow用)
-          const isFollowed = req.user.followerId.map(d => d.id).includes(user.id)
+          const isFollowed = helpers.getUser(req).Followings.map(d => d.id).includes(user.id)
           const data = {
             replies: tweet.Replies,
             repliesAmount: tweet.Replies.length,
             tweet: tweet,
             tweetLikedAmount: tweet.Likes.length,
             tweetsAmount: user.Tweets.length,
-            followersAmount: user.followerId.length,
-            followingsAmonut: user.followingId.length,
+            followersAmount: user.Followers.length,
+            followingsAmonut: user.Followings.length,
             likesAmount: user.Likes.length,
             isFollowed: isFollowed,
-            isLiked: tweet.Likes.map(d => d.UserId).includes(req.user.id)
+            isLiked: tweet.Likes.map(d => d.UserId).includes(helpers.getUser(req).id)
 
           }
           return res.render('replies', data)
@@ -331,7 +342,7 @@ const userController = {
       req.flash('error_messages', '請輸入留言')
     }
     Reply.create({
-      UserId: req.user.id,
+      UserId: helpers.getUser(req).id,
       TweetId: req.params.tweet_id,
       comment: req.body.reply
     })
