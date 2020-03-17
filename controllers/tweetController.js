@@ -8,6 +8,8 @@ const User = db.User
 const HashTag = db.Hashtag
 const Tag = db.Tag
 const helpers = require("../_helpers")
+const HashTag = db.Hashtag
+const Tag = db.Tag
 
 
 

@@ -17,7 +17,7 @@ module.exports = {
     const date = a.getDate()
     const hour = a.getHours()
     const minute = a.getMinutes()
-    return `${year}-${month}-${date},${hour}:${minute}`
+    return `${year}-${month}-${date}, ${hour}:${minute}`
   },
   subString: function (a) {
     return String(a).split("").length >= 50 ? a.substring(0, 50) + "....." : a
