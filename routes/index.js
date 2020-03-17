@@ -1,7 +1,7 @@
 const userController = require("../controllers/userController")
 const tweetController = require("../controllers/tweetController")
 const adminController = require("../controllers/adminController")
-
+const helpers = require("../_helpers")
 const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
 
@@ -41,7 +41,7 @@ module.exports = (app, passport) => {
   app.get('/tweets/:tweet_id/replies', authenticated, userController.getReplies)
   app.post('/tweets/:tweet_id/replies', authenticated, userController.createReply)
   app.post("/tweets/:id/like", authenticated, tweetController.likeTweet)
-  app.delete("/tweets/:id/unlike", authenticated, tweetController.unlikeTweet)
+  app.post("/tweets/:id/unlike", authenticated, tweetController.unlikeTweet)
 
   // Follow
   app.post("/followships/:followingId", authenticated, userController.addFollow)
