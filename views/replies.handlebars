@@ -2,25 +2,35 @@
     <div class="row">
         <div class="col-sm-4">
             <div>
-                <img src="{{tweet.User.avatar}}" style="width: 300px" alt="">
+                <img src="{{tweet.User.avatar}}" width="300px">
                 <h2>{{tweet.User.name}}</h2>
                 <p>{{tweet.User.introduction}}</p>
             </div>
             <div>
-                <h6>Tweets: <span>{{tweetsAmount}}</span></h6>
-                <h6>Following: <span>{{followingsAmonut}}</span></h6>
-                <h6>Follower: <span>{{followersAmount}}</span></h6>
-                <h6>Like: <span>{{likesAmount}}</span></h6>
+                <a href="/users/{{tweet.User.id}}/tweets"> 
+                    <h6>Tweets: <span>{{tweetsAmount}}</span></h6>
+                </a>
+                <a href="/users/{{tweet.User.id}}/followings">
+                    <h6>Following: <span>{{followingsAmonut}}</span></h6>
+                </a>
+                <a href="/users/{{tweet.User.id}}/followers">
+                    <h6>Follower: <span>{{followersAmount}}</span></h6>
+                </a>
+                <a href="/users/{{tweet.User.id}}/likes">
+                    <h6>Like: <span>{{likesAmount}}</span></h6>    
+                </a>
             </div>
             {{#ifCond userInfo.id tweet.User.id}}
-            <a href="/users/{{tweet.User.id}}/edit" class="btn btn-primary">Edit Profile</a>
+            <div class="text-center">
+                <a href="/users/{{tweet.User.id}}/edit" class="btn btn-primary">Edit Profile</a>
+            </div>
             {{else}}
             {{#if isFollowed}}
-            <form action="/followships/{{tweet.User.id}}?_method=DELETE" method="POST">
-                <button type="submit" class="btn btn-primary">UnFollow</button>
+            <form action="/followships/{{tweet.User.id}}?_method=DELETE" method="POST" class="text-center">
+                <button type="submit" class="btn btn-danger">UnFollow</button>
             </form>
             {{else}}
-            <form action="/followships" method="POST">
+            <form action="/followships" method="POST" class="text-center">
                 <button type="submit" class="btn btn-primary">Follow</button>
                 <input type="hidden" name="id" value="{{tweet.User.id}}">
             </form>
