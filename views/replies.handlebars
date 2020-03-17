@@ -12,7 +12,7 @@
                 <h6>Follower: <span>{{followersAmount}}</span></h6>
                 <h6>Like: <span>{{likesAmount}}</span></h6>
             </div>
-            {{#ifCond user.id tweet.User.id}}
+            {{#ifCond userInfo.id tweet.User.id}}
             <a href="/users/{{tweet.User.id}}/edit" class="btn btn-primary">Edit Profile</a>
             {{else}}
             {{#if isFollowed}}
@@ -20,8 +20,9 @@
                 <button type="submit" class="btn btn-primary">UnFollow</button>
             </form>
             {{else}}
-            <form action="/followships/{{tweet.User.id}}" method="POST">
+            <form action="/followships" method="POST">
                 <button type="submit" class="btn btn-primary">Follow</button>
+                <input type="hidden" name="id" value="{{tweet.User.id}}">
             </form>
             {{/if}}
             {{/ifCond}}

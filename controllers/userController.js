@@ -98,13 +98,20 @@ const userController = {
   },
 
   addFollow: (req, res) => {
-    Followship.create({
-      followerId: helpers.getUser(req).id,
-      followingId: req.params.followingId
-    })
-      .then((followship) => {
-        res.redirect("back")
+
+    if (Number(helpers.getUser(req).id) !== Number(req.body.id)) {
+      Followship.create({
+        followerId: Number(helpers.getUser(req).id),
+        followingId: Number(req.body.id)
       })
+        .then((followship) => {
+          return res.redirect("back")
+        })
+    } else {
+      return res.redirect(200, "back")   //改這
+
+    }
+
   },
 
   deleteFollow: (req, res) => {
