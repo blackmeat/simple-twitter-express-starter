@@ -70,7 +70,7 @@
               </div>
               <div style="float: left;">
                 {{#if this.isLiked }}
-                <form action="/tweets/{{this.id}}/unlike?_method=DELETE" method="POST">
+                <form action="/tweets/{{this.id}}/unlike" method="POST">
                   <button type="submit" class="btn btn-link" style="color: red;">Unlike({{this.LikeCount}})</button>
                 </form>
                 {{else}}
