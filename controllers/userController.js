@@ -5,7 +5,12 @@ const Reply = db.Reply
 const Followship = db.Followship
 const Tweet = db.Tweet
 const Like = db.Like
+
 const helpers = require("../_helpers")
+
+const Hashtag = db.Hashtag
+const Tag = db.Tag
+
 const fs = require('fs')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
@@ -66,7 +71,12 @@ const userController = {
           // 這位用戶Like過所有推文
           { model: Like, include: [Tweet] },
           // 這位用戶的推文包括推文的回覆、喜歡、使用者資訊
-          { model: Tweet, limit: 6, order: [["createdAt", "DESC"]], include: [Reply, Like, User] },
+          {
+            model: Tweet,
+            limit: 6,
+            order: [["createdAt", "DESC"]],
+            include: [Reply, Like, User, { model: Tag, include: [Hashtag] }]
+          },
           // 這位用戶的追蹤者
           { model: User, as: "Followers" },
           // 這位用戶正在追蹤的人數
@@ -89,7 +99,8 @@ const userController = {
           ...Tweet.dataValues,
           LikeCount: Tweet.dataValues.Likes.length,
           ReplyCount: Tweet.dataValues.Replies.length,
-          isLiked: Tweet.dataValues.Likes.map(d => d.UserId).includes(helpers.getUser(req).id)
+          isLiked: Tweet.dataValues.Likes.map(d => d.UserId).includes(helpers.getUser(req).id),
+          Hashtag: Tweet.dataValues.Tags.map(d => d.Hashtag).map(hashtag => ({ id: hashtag.id, name: hashtag.name }))
         }))
         // console.log(User)
         // console.log(Tweets)

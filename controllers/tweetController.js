@@ -6,6 +6,8 @@ const Like = db.Like
 const Followship = db.Followship
 const User = db.User
 const helpers = require("../_helpers")
+const HashTag = db.Hashtag
+const Tag = db.Tag
 
 
 let tweetController = {
@@ -57,13 +59,43 @@ let tweetController = {
       req.flash("error_messages", "內容不可以為空")
       return res.redirect("back")
     }
+    // 解析textarea內容出現在＃符號提出來
+    let hashTag = req.body.description.split("#").slice(1)
+    console.log(hashTag)
+    if (req.body.description.includes("#")) {
+      req.body.text = req.body.description.split("#")[0]
+    }
 
     return Tweet.create({
       description: req.body.description,
       UserId: helpers.getUser(req).id
     })
       .then((Tweet) => {
-        return res.redirect("back")
+        for (let i = 0; i < hashTag.length; i++) {
+          HashTag
+            .findAll()
+            .then((hashtags) => {
+              let hashtagsName = hashtags.map(hashtag => hashtag.name)
+              if (hashtagsName.every(name => name !== hashTag[i].replace(/\s*/g, ""))) {
+                HashTag.create({
+                  name: hashTag[i].replace(/\s*/g, "")
+                })
+                  .then((HashTag) => {
+                    Tag.create({
+                      HashtagId: HashTag.id,
+                      TweetId: Tweet.id
+                    })
+                  })
+              } else {
+                let hashtag = hashtags.find(hashtag => hashtag.name === hashTag[i])
+                Tag.create({
+                  HashtagId: hashtag.id,
+                  TweetId: Tweet.id
+                })
+              }
+            })
+        }
+        res.redirect("/tweets")
       })
   },
   likeTweet: (req, res) => {
