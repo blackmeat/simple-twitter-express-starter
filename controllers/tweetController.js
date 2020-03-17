@@ -49,21 +49,21 @@ let tweetController = {
     })
   },
   postTweet: (req, res) => {
-    if (req.body.text.length > 140) {
+    if (req.body.description.length > 140) {
       req.flash("error_messages", "字數不能超過140字")
-      return res.redirect("/tweets")
+      return res.redirect("back")
     }
-    if (req.body.text === "") {
+    if (req.body.description === "") {
       req.flash("error_messages", "內容不可以為空")
-      return res.redirect("/tweets")
+      return res.redirect("back")
     }
 
     return Tweet.create({
-      description: req.body.text,
+      description: req.body.description,
       UserId: helpers.getUser(req).id
     })
       .then((Tweet) => {
-        res.redirect("/tweets")
+        return res.redirect("back")
       })
   },
   likeTweet: (req, res) => {
