@@ -27,7 +27,8 @@
                 <p class="card-text">{{this.description}}</p>
               </div>
               <div class="col-6">
-                <a href="/tweets/{{this.id}}/replies">Reply({{this.reply}})</a>
+                <button type="button" class="btn btn-link"><a
+                    href="/tweets/{{this.id}}/replies">Reply({{this.reply}})</a></button>
               </div>
               <div class="col-6">
                 {{#if this.isLiked }}
