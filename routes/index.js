@@ -44,7 +44,7 @@ module.exports = (app, passport) => {
   app.post("/tweets/:id/unlike", authenticated, tweetController.unlikeTweet)
 
   // Follow
-  app.post("/followships/:followingId", authenticated, userController.addFollow)
+  app.post("/followships", authenticated, userController.addFollow)
   app.delete("/followships/:followingId", authenticated, userController.deleteFollow)
 
   // admin 

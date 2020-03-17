@@ -62,10 +62,11 @@
           </form>
           {{else}}
           {{#ifNoCond this.id ../nowUser}}
-          <form action="/followships/{{this.id}}" method="POST">
+          <form action="/followships" method="POST">
             <div class="text-right mb-2 mr-2">
               <button type="submit " class="btn btn-primary">Follow</button>
             </div>
+            <input type="hidden" name="id" value="{{this.id}}">
           </form>
           {{/ifNoCond}}
           {{/if}}
