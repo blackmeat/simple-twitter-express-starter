@@ -9,7 +9,7 @@ module.exports = {
       name: 'admin',
       avatar: faker.image.imageUrl(),
       introduction: faker.lorem.text(),
-      role: 1,
+      role: 'admin',
       createdAt: new Date(),
       updatedAt: new Date()
     }, {
@@ -18,7 +18,7 @@ module.exports = {
       name: 'user1',
       avatar: faker.image.imageUrl(),
       introduction: faker.lorem.text(),
-      role: '2',
+      role: '',
       createdAt: new Date(),
       updatedAt: new Date()
     }, {
@@ -27,7 +27,7 @@ module.exports = {
       name: 'user2',
       avatar: faker.image.imageUrl(),
       introduction: faker.lorem.text(),
-      role: '2',
+      role: '',
       createdAt: new Date(),
       updatedAt: new Date()
     }],{})
