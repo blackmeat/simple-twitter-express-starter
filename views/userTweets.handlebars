@@ -25,10 +25,11 @@
           </div>
         </form>
         {{else}}
-        <form action="/followships/{{User.id}}" method="POST">
+        <form action="/followships" method="POST">
           <div class="text-center">
             <button type="submit" class="btn btn-primary">Follow</button>
           </div>
+          <input type="hidden" name="id" value="{{User.id}}">
         </form>
         {{/if}}
 
