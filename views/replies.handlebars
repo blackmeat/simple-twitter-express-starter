@@ -102,14 +102,15 @@
                 {{/each}}
             </div>
             <div class="div mt-2"> 
-                <div class="card mb-3">
-                    <form action="/tweets/{{tweet.id}}/replies" method="POST">
-                        <div class="col-md-12"></div>
-                            <textarea name="reply" id="reply" cols="110" rows="5"></textarea>
-                        </div>
-                        <div class="col-md-12 text-right">
+                <div class="mb-3">
+                    <form action="/tweets/{{tweet.id}}/replies" method="POST" class="col-12">
+                        <div class="row card">
+                            <textarea name="reply" id="reply" rows="5"></textarea>
                             <button type="submit">Reply</button>
                         </div>
+                        
+                            
+                        
                     </form>
                 </div>         
             </div>
