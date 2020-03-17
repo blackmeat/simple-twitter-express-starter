@@ -1,9 +1,8 @@
 <div class="container row">
   <div class="col-4">
-
     <div class="container">
-      <div class="card text-center" style="width: 18rem;">
-        <img src="{{user.avatar}}" class="card-img-top ml-5" alt="..." style="width:175px; ;height:175px;">
+      <div class="card text-center">
+        <img src="{{user.avatar}}" class="card-img-top ml-1" alt="..." style="width:90%; ;height:90%;">
         <div class="card-body text-column">
           <a href="/users/{{user.id}}/tweets">
             <h5 class="card-title">{{user.name}}</h5>
@@ -28,7 +27,6 @@
         </div>
       </div>
     </div>
-
   </div>
   <div class="col-8">
     <h1>Like</h1>
@@ -40,21 +38,31 @@
           <img src="{{this.User.avatar}}" class="card-img mt-1 ml-1" alt="..." style="width:175px; ;height:175px;">
         </div>
         <div class="col-md-8">
-          <div class="card-body">
-            <a href="/users/{{this.User.id}}/tweets">
-              <h5 class="card-title">@{{this.User.name}},{{this.createdAt}}</h5>
-            </a>
-            <p class="card-text">{{this.description}}</p>
-            <a href="/tweets/{{this.id}}/replies">Reply({{this.reply}})</a>
-            {{#if this.iLiked }}
-            <form action="/tweets/{{this.id}}/unlike?_method=DELETE" method="POST">
-              <button type="submit" class="btn btn-link " style="color: red;">Unlike({{this.like}})</button>
-            </form>
-            {{else}}
-            <form action="/tweets/{{this.id}}/like" method="POST">
-              <button type="submit" class="btn btn-link">Like({{this.like}})</button>
-            </form>
-            {{/if}}
+          <div class="card-body row">
+            <div class="col-12">
+              <a href="/users/{{this.User.id}}/tweets">
+                <h5 class="card-title">@{{this.User.name}},{{this.createdAt}}</h5>
+              </a>
+            </div>
+            <div class="col-12">
+              <p class="card-text">{{this.description}}</p>
+            </div>
+            <div class="col-6">
+              <button type="button" class="btn btn-link">
+                <a href="/tweets/{{this.id}}/replies">Reply({{this.reply}})</a>
+              </button>
+            </div>
+            <div class="col-6">
+              {{#if this.iLiked }}
+              <form action="/tweets/{{this.id}}/unlike?_method=DELETE" method="POST">
+                <button type="submit" class="btn btn-link " style="color: red;">Unlike({{this.like}})</button>
+              </form>
+              {{else}}
+              <form action="/tweets/{{this.id}}/like" method="POST">
+                <button type="submit" class="btn btn-link">Like({{this.like}})</button>
+              </form>
+              {{/if}}
+            </div>
           </div>
         </div>
       </div>
