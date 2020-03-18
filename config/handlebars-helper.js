@@ -1,3 +1,5 @@
+const moment = require('moment')
+
 module.exports = {
   ifCond: function (a, b, options) {
     if (a === b) {
@@ -12,12 +14,7 @@ module.exports = {
     return options.inverse(this)
   },
   date: function (a) {
-    const year = a.getFullYear()
-    const month = a.getMonth() + 1
-    const date = a.getDate()
-    const hour = a.getHours()
-    const minute = a.getMinutes()
-    return `${year}-${month}-${date}, ${hour}:${minute}`
+    return moment(a).format('YYYY-MM-DD,HH:mm:ss')
   },
   subString: function (a) {
     return String(a).split("").length >= 50 ? a.substring(0, 50) + "....." : a

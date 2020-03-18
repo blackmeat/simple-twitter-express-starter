@@ -339,7 +339,6 @@ const userController = {
             likesAmount: user.Likes.length,
             isFollowed: isFollowed,
             isLiked: tweet.Likes.map(d => d.UserId).includes(helpers.getUser(req).id)
-
           }
           return res.render('replies', data)
         })
