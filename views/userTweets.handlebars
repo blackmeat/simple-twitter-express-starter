@@ -54,20 +54,23 @@
           </div>
           {{!-- card右側 --}}
           <div class="col-8">
+            {{!-- 名稱＋時間 --}}
             <div class="row">
               <a href="/users/{{this.User.id}}/tweets">
                 <h5>{{this.User.name}}</h5>
               </a>
-
-              <span style="font-size: 20px;">&nbsp&nbsp{{date this.createdAt}}</span>
+              <h5>&nbsp&nbsp{{date this.createdAt}}</h5>
             </div>
+            {{!-- 內容 --}}
             <p>
               {{this.description}}
             </p>
             <div class="row">
+              {{!-- Reply --}}
               <div style="float: left;">
                 <a href="/tweets/{{this.id}}/replies" class="btn btn-link">Reply({{this.ReplyCount}})</a>
               </div>
+              {{!-- Like --}}
               <div style="float: left;">
                 {{#if this.isLiked }}
                 <form action="/tweets/{{this.id}}/unlike" method="POST">
@@ -81,6 +84,7 @@
               </div>
             </div>
             <hr>
+            {{!-- Hashtag --}}
             <div class="row">
               {{#each this.Hashtag}}
               <div class="mx-2" style="float: left;font-size:20px ">

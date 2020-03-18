@@ -5,10 +5,12 @@ const Reply = db.Reply
 const Followship = db.Followship
 const Tweet = db.Tweet
 const Like = db.Like
+
+const helpers = require("../_helpers")
+
 const Hashtag = db.Hashtag
 const Tag = db.Tag
 
-const helpers = require("../_helpers")
 const fs = require('fs')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
@@ -37,7 +39,8 @@ const userController = {
             User.create({
               name: req.body.name,
               email: req.body.email,
-              password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10), null)
+              password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10), null),
+              avatar: "https://image.damanwoo.com/files/styles/rs-medium/public/flickr/3/2315/5820745122_acf40696e7_o.jpg"
             }).then(user => {
               req.flash("success_messages", "成功註冊！！")
               return res.redirect('/signin')
@@ -96,9 +99,9 @@ const userController = {
         const Tweets = User.Tweets.map((Tweet) => ({
           ...Tweet.dataValues,
           LikeCount: Tweet.dataValues.Likes.length,
-          ReplyCount: Tweet.dataValues.Replies.length,   
+          ReplyCount: Tweet.dataValues.Replies.length,
+          isLiked: Tweet.dataValues.Likes.map(d => d.UserId).includes(helpers.getUser(req).id),
           Hashtag: Tweet.dataValues.Tags.map(d => d.Hashtag).map(hashtag => ({ id: hashtag.id, name: hashtag.name }))
-          isLiked: Tweet.dataValues.Likes.map(d => d.UserId).includes(helpers.getUser(req).id)
         }))
         // console.log(User)
         // console.log(Tweets)
@@ -265,7 +268,7 @@ const userController = {
   },
 
   getuserlikes: (req, res) => {
-    Tweet.findAll({ order: [['createdAt', 'DESC']], include: [User, { model: Reply, include: [User] }, { model: Like, include: [User] }] }).then(result => {   //最新的tweet顯示在前面
+    Tweet.findAll({ order: [['createdAt', 'DESC']], include: [User, { model: Reply, include: [User] }, { model: Like, include: [User] }, { model: Tag, include: [Hashtag] }] }).then(result => {   //最新的tweet顯示在前面
       const data = result.map(r => ({
         ...r.dataValues,
         createdAt: moment(r.createdAt).format('YYYY-MM-DD,HH:mm:ss'), //以moment套件，轉化成特定格式
@@ -273,7 +276,8 @@ const userController = {
         reply: r.dataValues.Replies.length, //計算reply數量
         like: r.dataValues.Likes.length, //計算like數量
         isLiked: r.Likes.map(d => d.UserId).includes(Number(req.params.id)),
-        iLiked: r.Likes.map(d => d.UserId).includes(Number(helpers.getUser(req).id))
+        iLiked: r.Likes.map(d => d.UserId).includes(Number(helpers.getUser(req).id)),
+        Hashtag: r.dataValues.Tags.map(d => d.Hashtag).map(hashtag => ({ id: hashtag.id, name: hashtag.name }))
       }))
 
       User.findOne({
@@ -313,7 +317,8 @@ const userController = {
       include: [
         User,
         Like,
-        { model: Reply, include: [User] }
+        { model: Reply, include: [User] },
+        { model: Tag, include: [Hashtag] }
       ]
     }).then(tweet => {
       // 再撈出該筆tweet發文者資料，主要是給頁面左半算數量使用
@@ -332,6 +337,7 @@ const userController = {
             replies: tweet.Replies,
             repliesAmount: tweet.Replies.length,
             tweet: tweet,
+            Hashtag: tweet.dataValues.Tags.map(d => d.Hashtag).map(hashtag => ({ id: hashtag.id, name: hashtag.name })),
             tweetLikedAmount: tweet.Likes.length,
             tweetsAmount: user.Tweets.length,
             followersAmount: user.Followers.length,

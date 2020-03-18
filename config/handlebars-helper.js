@@ -14,7 +14,7 @@ module.exports = {
     return options.inverse(this)
   },
   date: function (a) {
-    return moment(a).format('YYYY-MM-DD,HH:mm:ss')
+    return moment(a).format('YYYY-MM-DD, HH:mm:ss')
   },
   subString: function (a) {
     return String(a).split("").length >= 50 ? a.substring(0, 50) + "....." : a
