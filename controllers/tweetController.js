@@ -5,13 +5,16 @@ const Reply = db.Reply
 const Like = db.Like
 const Followship = db.Followship
 const User = db.User
+const HashTag = db.Hashtag
+const Tag = db.Tag
 const helpers = require("../_helpers")
+
 
 
 let tweetController = {
   getTweets: (req, res) => {
 
-    Tweet.findAll({ order: [['createdAt', 'DESC']], include: [User, { model: Reply, include: [User] }, { model: Like, include: [User] }] }).then(result => {   //最新的tweet顯示在前面
+    Tweet.findAll({ order: [['createdAt', 'DESC']], include: [User, { model: Reply, include: [User] }, { model: Like, include: [User] }, { model: Tag, include: [HashTag] }] }).then(result => {   //最新的tweet顯示在前面
       // console.log(result[9].Likes)
 
       const data = result.map(r => ({
@@ -20,7 +23,8 @@ let tweetController = {
         description: r.dataValues.description.substring(0, 50),
         reply: r.dataValues.Replies.length, //計算reply數量
         like: r.dataValues.Likes.length, //計算like數量
-        isLiked: r.Likes.map(d => d.UserId).includes(helpers.getUser(req).id)
+        isLiked: r.Likes.map(d => d.UserId).includes(helpers.getUser(req).id),
+        Hashtag: r.dataValues.Tags.map(d => d.Hashtag).map(hashtag => ({ id: hashtag.id, name: hashtag.name }))
       }))
 
       User.findAll({
@@ -57,13 +61,43 @@ let tweetController = {
       req.flash("error_messages", "內容不可以為空")
       return res.redirect("back")
     }
+    // 解析textarea內容出現在＃符號提出來
+    let hashTag = req.body.description.split("#").slice(1)
+    console.log(hashTag)
+    if (req.body.description.includes("#")) {
+      req.body.description = req.body.description.split("#")[0]
+    }
 
     return Tweet.create({
       description: req.body.description,
       UserId: helpers.getUser(req).id
     })
       .then((Tweet) => {
-        return res.redirect("back")
+        for (let i = 0; i < hashTag.length; i++) {
+          HashTag
+            .findAll()
+            .then((hashtags) => {
+              let hashtagsName = hashtags.map(hashtag => hashtag.name)
+              if (hashtagsName.every(name => name !== hashTag[i].replace(/\s*/g, ""))) {
+                HashTag.create({
+                  name: hashTag[i].replace(/\s*/g, "")
+                })
+                  .then((HashTag) => {
+                    Tag.create({
+                      HashtagId: HashTag.id,
+                      TweetId: Tweet.id
+                    })
+                  })
+              } else {
+                let hashtag = hashtags.find(hashtag => hashtag.name === hashTag[i])
+                Tag.create({
+                  HashtagId: hashtag.id,
+                  TweetId: Tweet.id
+                })
+              }
+            })
+        }
+        res.redirect("/tweets")
       })
   },
   likeTweet: (req, res) => {
