@@ -6,14 +6,14 @@ const Like = db.Like
 const Followship = db.Followship
 const User = db.User
 const helpers = require("../_helpers")
-const HashTag = db.Hashtag
+const Hashtag = db.Hashtag
 const Tag = db.Tag
 
 
 let tweetController = {
   getTweets: (req, res) => {
 
-    Tweet.findAll({ order: [['createdAt', 'DESC']], include: [User, { model: Reply, include: [User] }, { model: Like, include: [User] }] }).then(result => {   //最新的tweet顯示在前面
+    Tweet.findAll({ order: [['createdAt', 'DESC']], include: [User, { model: Reply, include: [User] }, { model: Like, include: [User] }, { model: Tag, include: [Hashtag] }] }).then(result => {   //最新的tweet顯示在前面
       // console.log(result[9].Likes)
 
       const data = result.map(r => ({
@@ -22,7 +22,8 @@ let tweetController = {
         description: r.dataValues.description.substring(0, 50),
         reply: r.dataValues.Replies.length, //計算reply數量
         like: r.dataValues.Likes.length, //計算like數量
-        isLiked: r.Likes.map(d => d.UserId).includes(helpers.getUser(req).id)
+        isLiked: r.Likes.map(d => d.UserId).includes(helpers.getUser(req).id),
+        Hashtag: r.dataValues.Tags.map(d => d.Hashtag).map(hashtag => ({ id: hashtag.id, name: hashtag.name }))
       }))
 
       User.findAll({

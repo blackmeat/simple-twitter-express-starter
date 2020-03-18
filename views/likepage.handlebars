@@ -71,6 +71,16 @@
               </div>
             </div>
             <hr>
+            {{!-- Hashtag --}}
+            <div class="row">
+              {{#each this.Hashtag}}
+              <div class="mx-2" style="float: left;font-size:20px ">
+                <a href="/hashtags/{{this.id}}/tweets" style="background-color:white;color:black ">
+                  <i class="fa fa-tag mx-1" aria-hidden="true"></i>{{this.name}}
+                </a>
+              </div>
+              {{/each}}
+            </div>
           </div>
         </div>
       </div>
