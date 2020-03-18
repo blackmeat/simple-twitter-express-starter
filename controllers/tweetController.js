@@ -5,9 +5,10 @@ const Reply = db.Reply
 const Like = db.Like
 const Followship = db.Followship
 const User = db.User
-const helpers = require("../_helpers")
 const Hashtag = db.Hashtag
 const Tag = db.Tag
+const helpers = require("../_helpers")
+
 
 
 let tweetController = {
@@ -64,7 +65,7 @@ let tweetController = {
     let hashTag = req.body.description.split("#").slice(1)
     console.log(hashTag)
     if (req.body.description.includes("#")) {
-      req.body.text = req.body.description.split("#")[0]
+      req.body.description = req.body.description.split("#")[0]
     }
 
     return Tweet.create({

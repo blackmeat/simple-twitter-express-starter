@@ -1,5 +1,5 @@
 <div class="container my-3 ">
-  <div class="row col-12">
+  <div class="row">
     <div class="col-4">
       <div class="col-8 my-2">
         <img src="{{User.avatar}}" class="rounded" alt="大頭貼" width="200px" height="200px">
@@ -14,7 +14,7 @@
           <a href="/users/{{User.id}}/followings">
             <h3>Following：{{User.FollowingCount}}</h3>
           </a>
-          <a href="/users/{{User.id}}/followers">
+          <a href="/users/{{User.id}}followers">
             <h3>Follower：{{User.FollowerCount}}</h3>
           </a>
           <a href="/users/{{User.id}}/likes">
@@ -40,7 +40,6 @@
           <input type="hidden" name="id" value="{{User.id}}">
         </form>
         {{/if}}
-
         {{/ifCond}}
       </div>
     </div>
