@@ -5,7 +5,7 @@ const Reply = db.Reply
 const Followship = db.Followship
 const Tweet = db.Tweet
 const Like = db.Like
-
+const uuid = require('uuid')
 const fs = require('fs')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
@@ -49,7 +49,12 @@ const userController = {
   },
 
   signIn: (req, res) => {
+    const id = uuid.v4();
+
+    console.log(`Updating session for user ${id}`);
+    req.session.userId = id;
     req.flash("success_messages", "成功登入")
+    console.log(req.session.userId)
     res.redirect("/tweets")
   },
 
