@@ -56,4 +56,16 @@ module.exports = (app, passport) => {
 
   // hashtag
   app.get("/hashtags/:id/tweets", authenticated, hashtagController.getHashtagTweets)
+  // privateChat
+  // :hostChatId表示發起聊天的人(即當前登入的使用者)， :id表示被聊天的對象
+  app.get('/chat/:hostChatId/:id', authenticated, (req, res) => {
+    // console.log(Number(req.user.id))
+    // console.log(Number(req.params.hostChatId))
+    if (Number(req.user.id) === Number(req.params.hostChatId)) {
+      res.render('chat')
+    } else {
+      return res.redirect('back')
+    }
+
+  })
 }

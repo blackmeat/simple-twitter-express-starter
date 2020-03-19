@@ -63,14 +63,17 @@ let tweetController = {
     }
     // 解析textarea內容出現在＃符號提出來
     let hashTag = req.body.description.split("#").slice(1)
-    console.log(hashTag)
+    // console.log(hashTag)
     if (req.body.description.includes("#")) {
       req.body.description = req.body.description.split("#")[0]
     }
-
+    console.log(req.body.checkin_url)
+    console.log(req.body.checkin_name)
     return Tweet.create({
       description: req.body.description,
-      UserId: helpers.getUser(req).id
+      UserId: helpers.getUser(req).id,
+      url: req.body.checkin_url,
+      place: req.body.checkin_name
     })
       .then((Tweet) => {
         for (let i = 0; i < hashTag.length; i++) {

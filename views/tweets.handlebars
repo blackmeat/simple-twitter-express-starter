@@ -6,6 +6,10 @@
           <div class="form-group">
             <textarea class="form-control" id="description" name="description" rows="5"
               placeholder="What's on your mind"></textarea>
+            <i class="fa fa-map-marker" aria-hidden="true"></i>
+            <input id="pac-input" class="controls" type="text" placeholder="我在...">
+            <input type="hidden" id="checkin_url" name="checkin_url" value="">
+            <input type="hidden" id="checkin_name" name="checkin_name" value="">
           </div>
           <div style="text-align:right;">
             <button type="submit" class="btn btn-primary" style="width:100px">Tweet</button>
@@ -27,6 +31,9 @@
                 <h5>&nbsp&nbsp{{date this.createdAt}}</h5>
               </div>
               <p class="card-text">{{this.description}}</p>
+              {{#if this.url}}
+              <a href="{{this.url}}"><i class="fa fa-map-marker" aria-hidden="true"></i>{{this.place}}</a>
+              {{/if}}
               <div class="row">
                 <div tyle="float: left;">
                   <a href="/tweets/{{this.id}}/replies" class="btn btn-link">Reply({{this.reply}})</a>
@@ -98,3 +105,28 @@
     </div>
   </div>
 </div>
+<script>
+  function initAutocomplete() {
+    var checkin_url = document.getElementById('checkin_url')  //這兩行用於填入名字跟網址
+    var checkin_name = document.getElementById('checkin_name')
+    var input = document.getElementById('pac-input');     //選取serchbox
+    var searchBox = new google.maps.places.SearchBox(input);
+    searchBox.addListener('places_changed', function () {         //監聽input有沒有改變
+      var places = searchBox.getPlaces();   //獲取地點資訊
+      if (places.length == 0) {             //若為空值return
+        return;
+      }
+
+      places.forEach(function (place) {
+        if (!place.geometry) {
+          console.log("Returned place contains no geometry");
+          return;
+        }
+      });
+      console.log(places)
+      checkin_url.value = places[0].url
+      checkin_name.value = places[0].name //將需要資訊帶入
+    });
+  }</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=[your key!]&libraries=places&callback=initAutocomplete" async
+  defer></script>

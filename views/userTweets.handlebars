@@ -65,6 +65,9 @@
             <p>
               {{this.description}}
             </p>
+            {{#if this.url}}
+            <a href="{{this.url}}"><i class="fa fa-map-marker" aria-hidden="true"></i>{{this.place}}</a>
+            {{/if}}
             <div class="row">
               {{!-- Reply --}}
               <div style="float: left;">
