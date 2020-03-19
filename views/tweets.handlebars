@@ -6,6 +6,7 @@
           <div class="form-group">
             <textarea class="form-control" id="description" name="description" rows="5"
               placeholder="What's on your mind"></textarea>
+            <i class="fa fa-map-marker" aria-hidden="true"></i>
             <input id="pac-input" class="controls" type="text" placeholder="我在...">
             <input type="hidden" id="checkin_url" name="checkin_url" value="">
             <input type="hidden" id="checkin_name" name="checkin_name" value="">
@@ -30,7 +31,9 @@
                 <h5>&nbsp&nbsp{{date this.createdAt}}</h5>
               </div>
               <p class="card-text">{{this.description}}</p>
-              <a href="{{this.url}}">#{{this.place}}</a>
+              {{#if this.url}}
+              <a href="{{this.url}}"><i class="fa fa-map-marker" aria-hidden="true"></i>{{this.place}}</a>
+              {{/if}}
               <div class="row">
                 <div tyle="float: left;">
                   <a href="/tweets/{{this.id}}/replies" class="btn btn-link">Reply({{this.reply}})</a>
@@ -125,6 +128,5 @@
       checkin_name.value = places[0].name //將需要資訊帶入
     });
   }</script>
-<script
-  src="https://maps.googleapis.com/maps/api/js?KEY=AIzaSyDR1zy17boisZdmRvnBxgDiWab5v2VKONA&libraries=places&callback=initAutocomplete"
-  async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key=[your key]&libraries=places&callback=initAutocomplete" async
+  defer></script>
