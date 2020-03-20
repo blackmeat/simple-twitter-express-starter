@@ -17,6 +17,7 @@ const websocket = {
       // 當WebSocket從外面連結時執行
       wss.on('connection', (ws, req) => {
         console.log('Client connected')
+
         online = wss._server._connections
         console.log('目前在線', online, '個連接')
         ws.send('目前在線' + online + '個連接')

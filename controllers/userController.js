@@ -50,7 +50,8 @@ const userController = {
 
   signIn: (req, res) => {
     req.flash("success_messages", "成功登入")
-    res.redirect("/tweets")
+    req.session.userId = req.user.id
+    return res.redirect("/tweets")
   },
 
   logout: (req, res) => {

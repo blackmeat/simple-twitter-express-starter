@@ -9,7 +9,6 @@ const User = db.User
 
 let tweetController = {
   getTweets: (req, res) => {
-
     Tweet.findAll({ order: [['createdAt', 'DESC']], include: [User, { model: Reply, include: [User] }, { model: Like, include: [User] }] }).then(result => {   //最新的tweet顯示在前面
       // console.log(result[9].Likes)
 

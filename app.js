@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static('public'))
 app.use('/upload', express.static(__dirname + '/upload'))
 
-app.use(session({ secret: "12345", resave: false, saveUninitialized: false }))
+app.use(session({ secret: "12345", resave: false, saveUninitialized: false }) )
 app.use(flash())
 
 app.use(passport.initialize())
