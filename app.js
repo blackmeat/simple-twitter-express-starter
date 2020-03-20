@@ -37,34 +37,26 @@ app.use((req, res, next) => {
   next()
 })
 
+require("./routes/index")(app, passport)
+module.exports = app
+
 // 要把原本app.listen包起來
-const server = app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+// const server = app.listen(port, () => console.log(`Example app listening on port ${port}!`))
 
-// require('./config/websocketConfig').websocket(server)
-
-// --- websocket專區(參照ws套件官方範例) ---
-const http = require('http')
-const uuid = require('uuid')
-const sessionParser = session({
-  saveUninitialized: false,
-  secret: '$eCuRiTy',
-  resave: false
-});
-const Websocket = require('../..')
-const map = new Map()
-
+/*
+// ------ 我們看網路其他人的寫法 ------
+const SocketServer = require('ws').Server
 let user = {} // 連接用戶數
 let online = 0 // 在線人數
 
 //把app交給SocketServer開啟 WebSocket 的服務
-const wss = new Websocket.Server({clientTracking: false, noserver: true})
-/*const wss = new SocketServer({ server, verifyClient: yan })
+const wss = new SocketServer({ server, verifyClient: yan })
 function yan(info) {
   console.log(info.req.headers.cookie)
   let infoUrl = info.req.url
   console.log('通過連接' + infoUrl)
   return true
-}*/
+}
 
 // 當WebSocket從外面連結時執行
 wss.on('connection', (ws, req) => {
@@ -91,11 +83,11 @@ wss.on('connection', (ws, req) => {
     if (chattedUser) {
       // 會去查看被聊天的對象有沒有被存在user裡了
       if (user[chattedUser]) {
-        /* 當對方沒有連線的時候，對方的readyState會變成3，只是我不確定它是在哪個時候存進去把1變3的，
-        照理說user這個物件是在wss connection連接的時候就已經把所屬的ws塞進去了，
-        我也沒有在斷線的時候，把對方所屬的readyState塞進去user裡，應該是不會被更新成3?
-        用console發現好像是對方斷線的時候，會自動連動更新原本存在user裡的readyState?
-        */
+        // 當對方沒有連線的時候，對方的readyState會變成3，只是我不確定它是在哪個時候存進去把1變3的，
+        // 照理說user這個物件是在wss connection連接的時候就已經把所屬的ws塞進去了，
+        // 我也沒有在斷線的時候，把對方所屬的readyState塞進去user裡，應該是不會被更新成3?
+        // 用console發現好像是對方斷線的時候，會自動連動更新原本存在user裡的readyState?
+        
         if (user[chattedUser].readyState === 1) {
           user[chattedUser].send(data) // 把訊息送給被聊天的對象
           ws.send(data) // 也把訊息送回給發起聊天的人
@@ -127,8 +119,60 @@ wss.on('connection', (ws, req) => {
 
   })
 })
+*/
+
+// ------ 參照ws套件官方範例) ------
+const uuid = require('uuid')
+const http = require('http')
+const Websocket = require('ws')
+const server = http.createServer(app)
+const wss = new Websocket.Server({port: 3001, clientTracking: false, noserver: true})
+
+const sessionParser = session({
+  
+  saveUninitialized: false,
+  secret: '$eCuRiTy',
+  resave: false
+});
+
+app.use(sessionParser)
+
+server.on('upgrade', function(request, socket, head) {
+  console.log(`parsing session from request...`)
+  
+  sessionParser(request, {} ,() => {
+    console.log(request.session)
+    if (!request.session.userId) {
+      // socket.destroy()
+      return
+    }
+    console.log('session is parsed!')
+
+    wss.handleUpgrade(request, socket, head, function(ws) {
+      wss.emit('connection', ws, request);
+    })
+  })
+})
+
+wss.on('connection', function(ws, request) {
+  console.log('連接建立')
+  ws.send('連接建立')
+  const userId = request.session.userId
+  map.set(userId, ws)
+  ws.on('message', function(message) {
+    //
+    // Here we can now use session parameters.
+    //
+    console.log(`Received message ${message} from user ${userId}`)
+  })
+
+  ws.on('close', function() {
+    map.delete(userId)
+  })
+})
+
+server.listen(3000, function() {
+  console.log('Listening on http://localhost:3000');
+});
 
 
-
-require("./routes/index")(app, passport)
-module.exports = app
