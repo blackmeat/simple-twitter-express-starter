@@ -56,6 +56,7 @@
 </body>
 <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
   crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script src="/javascripts/bootstrap-typeahead.js"></script>
 <script src="/javascripts/mention.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
@@ -64,13 +65,22 @@
   integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 <script>
   $(document).ready(function () {
-    $("#description").mention({
-      users: [
-        { username: 'Amy', email: "root@example.com" },
-        { username: 'Amenda', email: "user1@example.com" },
-      ]
-    });
+    $.ajax({
+      url: "http://localhost:3000/api/users",
+      type: "GET",
+      datatype: "json",
+      success: function (data) {
+        data.Users = data.Users.map((user) => ({ image: user.avatar, username: user.name, email: user.email }))
+        console.log(data)
+        $("#description").mention({
+          users: data.Users
+        });
+      }
+    })
   })
+</script>
+<script>
+
 </script>
 
 </html>
