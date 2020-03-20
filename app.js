@@ -23,7 +23,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static('public'))
 app.use('/upload', express.static(__dirname + '/upload'))
 
-app.use(session({ secret: "12345", resave: false, saveUninitialized: false }))
+app.use(session({name:'QQQ', secret: "12345", resave: false, saveUninitialized: false }))
 app.use(flash())
 
 app.use(passport.initialize())
@@ -127,15 +127,6 @@ const http = require('http')
 const Websocket = require('ws')
 const server = http.createServer(app)
 const wss = new Websocket.Server({port: 3001, clientTracking: false, noserver: true})
-
-const sessionParser = session({
-  
-  saveUninitialized: false,
-  secret: '$eCuRiTy',
-  resave: false
-});
-
-app.use(sessionParser)
 
 server.on('upgrade', function(request, socket, head) {
   console.log(`parsing session from request...`)
