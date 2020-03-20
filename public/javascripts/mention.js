@@ -8,7 +8,7 @@
                 delimiter: '@',
                 sensitive: true,
                 emptyQuery: false,
-                queryBy: ['name', 'username'],
+                queryBy: ['username', 'email'],
                 typeaheadOpts: {}
             };
 
@@ -132,12 +132,13 @@
                         if (item.image) {
                             _linkHtml.append('<img class="mention_image" src="' + item.image + '">');
                         }
-                        if (item.name) {
-                            _linkHtml.append('<b class="mention_name">' + item.name + '</b>');
-                        }
                         if (item.username) {
-                            _linkHtml.append('<span class="mention_username"> ' + settings.delimiter + item.username + '</span>');
+                            _linkHtml.append('<span class="mention_username"> ' + settings.delimiter + item.username + ' </span>');
                         }
+                        if (item.email) {
+                            _linkHtml.append('<b class="mention_email">' + item.email + '</b>');
+                        }
+
 
                         i.find('a').html(that.highlighter(_linkHtml.html()));
                         return i[0];
