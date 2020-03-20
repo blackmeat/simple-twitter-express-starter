@@ -30,10 +30,13 @@
                 </a>
                 <h5>&nbsp&nbsp{{date this.createdAt}}</h5>
               </div>
-              <p class="card-text">{{this.description}}</p>
-              {{#if this.url}}
-              <a href="{{this.url}}"><i class="fa fa-map-marker" aria-hidden="true"></i>{{this.place}}</a>
-              {{/if}}
+              <div class="row">
+                {{#if this.url}}
+                <a href="{{this.url}}" style="font-size: 18px;"><i class="fa fa-map-marker mr-2"
+                    aria-hidden="true"></i>{{this.place}}</a>
+                {{/if}}
+              </div>
+              <p class="card-text my-2">{{this.description}}</p>
               <div class="row">
                 <div tyle="float: left;">
                   <a href="/tweets/{{this.id}}/replies" class="btn btn-link">Reply({{this.reply}})</a>

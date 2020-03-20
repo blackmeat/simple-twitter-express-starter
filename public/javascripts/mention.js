@@ -77,7 +77,7 @@
                     var replace = data.substring(i, caratPos),
                         textBefore = data.substring(0, i),
                         textAfter = data.substring(caratPos),
-                        data = textBefore + settings.delimiter + item + textAfter;
+                        data = textBefore + item + textAfter;
 
                     this.tempQuery = data;
 
@@ -133,7 +133,7 @@
                             _linkHtml.append('<img class="mention_image" src="' + item.image + '">');
                         }
                         if (item.username) {
-                            _linkHtml.append('<span class="mention_username"> ' + settings.delimiter + item.username + ' </span>');
+                            _linkHtml.append('<span class="mention_username" style="color:blue"> ' + item.username + ' </span>');
                         }
                         if (item.email) {
                             _linkHtml.append('<b class="mention_email">' + item.email + '</b>');
