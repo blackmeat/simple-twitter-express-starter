@@ -54,17 +54,14 @@ module.exports = (app, passport) => {
   app.get("/admin/users", authenticatedAdmin, adminController.getUsers)
 
   // privateChat
-  const uuid = require('uuid')
+  
   // :hostChatId表示發起聊天的人(即當前登入的使用者)， :id表示被聊天的對象
   app.get('/chat/:hostChatId/:id', /*authenticated,*/(req, res) => {
     //
     // "Log in" user and set userId to session.
     //
-    const id = uuid.v4()
-
-    console.log(`updating session for user ${id}`)
-    req.session.userId = id
-    console.log(req.session)
+    req.session.userId = '123'
+    console.log('在chat路由', req.session)
     // res.send({result: 'OK', message: 'Session updated'})
     return res.render('chat')
     

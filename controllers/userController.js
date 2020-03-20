@@ -11,9 +11,6 @@ const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = 'a145f3a2c4d12e7'
 const moment = require("moment")
 
-
-
-
 const userController = {
   signUpPage: (req, res) => {
     res.render('signup')

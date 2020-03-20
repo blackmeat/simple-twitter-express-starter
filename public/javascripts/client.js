@@ -2,14 +2,14 @@ const url = 'ws://' + window.location.href.substring(7)
 console.log(url)
 
 // 使用WebSocket的網址向Server開啟連結
-let ws = new WebSocket(url)
+let ws = new WebSocket(url) // 這邊的網址都會是一樣!!!
 
-// 開啟連接後執行的動作
+// 開啟連結後執行的動作
 ws.onopen = () => {
     console.log('open connection')
 }
 
-// 關閉連接後執行
+// 關閉連結後執行
 ws.onclose = () => {
     console.log('close connection')
 }
