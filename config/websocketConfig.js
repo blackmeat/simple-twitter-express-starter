@@ -7,7 +7,7 @@ const websocket = {
     
     const verifyClientFn = function(info) {
       console.log(info.req.headers.cookie)
-      let infoUrl = info.req
+      let infoUrl = info.req.session.userId
       console.log('通過連接'+ infoUrl)
       return true
     } 
@@ -15,8 +15,6 @@ const websocket = {
     // const wss = new Websocket.Server({ server, verifyClient: verifyClientFn })
     const wss = new Websocket.Server({ port: 3001, clientTracking: false, noserver: true, verifyClient: verifyClientFn })
     
-    
-
     wss.on('connection', function (ws, request) {
       console.log('連接建立')
       ws.send('連接建立')
