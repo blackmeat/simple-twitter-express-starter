@@ -7,7 +7,7 @@ const websocket = {
     
     const verifyClientFn = function(info) {
       console.log(info.req.headers.cookie)
-      let infoUrl = info.req.url
+      let infoUrl = info.req
       console.log('通過連接'+ infoUrl)
       return true
     } 
@@ -15,20 +15,7 @@ const websocket = {
     // const wss = new Websocket.Server({ server, verifyClient: verifyClientFn })
     const wss = new Websocket.Server({ port: 3001, clientTracking: false, noserver: true, verifyClient: verifyClientFn })
     
-    server.on('upgrade', function (request, socket, head) {
-      console.log(`parsing session from request...`)
-      sessionParser(request, {}, () => {
-        console.log('websocket拿到的', request.session)
-        if (!request.session.userId) {
-          socket.destroy()
-          return
-        }
-        console.log('session is parsed!')
-        wss.handleUpgrade(request, socket, head, function (ws) {
-          wss.emit('connection', ws, request)
-        })
-      })
-    })
+    
 
     wss.on('connection', function (ws, request) {
       console.log('連接建立')
@@ -45,6 +32,21 @@ const websocket = {
 
       ws.on('close', function () {
         map.delete(userId)
+      })
+    })
+
+    server.on('upgrade', function (request, socket, head) {
+      console.log(`parsing session from request...`)
+      sessionParser(request, {}, () => {
+        console.log('websocket拿到的', request.session)
+        if (!request.session.userId) {
+          socket.destroy()
+          return
+        }
+        console.log('session is parsed!')
+        wss.handleUpgrade(request, socket, head, function (ws) {
+          wss.emit('connection', ws, request)
+        })
       })
     })
 
