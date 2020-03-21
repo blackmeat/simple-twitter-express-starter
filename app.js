@@ -40,16 +40,6 @@ app.use((req, res, next) => {
   next()
 })
 
-// 下面這三行是用在官方寫法的server是用http時，那後面的app就都要改成server
-// const http = require('http')
-// const Websocket = require('ws')
-// const server = http.createServer(app)
-
 require("./routes/index")(app, passport)
- require('./config/websocketConfig').websocket(app, sessionParser)
-
-
-
-
-
+require('./config/websocketConfig').websocket(app, sessionParser, server)
 module.exports = app

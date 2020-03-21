@@ -1,6 +1,3 @@
-// const SocketServer = require('ws').Server
-
-
 const websocket = {
   websocket: function (app, sessionParser) {
     const Websocket = require('ws')
@@ -14,6 +11,8 @@ const websocket = {
       console.log('通過連接'+ infoUrl)
       return true
     } 
+    
+    // const wss = new Websocket.Server({ server, verifyClient: verifyClientFn })
     const wss = new Websocket.Server({ port: 3001, clientTracking: false, noserver: true, verifyClient: verifyClientFn })
     
     server.on('upgrade', function (request, socket, head) {
