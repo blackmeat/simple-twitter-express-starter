@@ -9,7 +9,7 @@
                 sensitive: true,
                 emptyQuery: true,
                 queryBy: ['username', 'email'],
-                typeaheadOpts: {}
+                typeaheadOpts: { items: 6 }
             };
 
             var settings = $.extend({}, this.opts, options),

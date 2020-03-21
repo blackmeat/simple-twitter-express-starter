@@ -74,6 +74,9 @@
         $("#description").mention({
           users: data.Users
         });
+      },
+      error: function () {
+        alert("Something wrong!!")
       }
     })
   })
