@@ -1,42 +1,80 @@
 const SocketServer = require('ws').Server
+const db = require('../models')
+const Channel = db.Channel
+const Message = db.Message
+
 
 const websocket = {
-  websocket: function (server) {
-    let user = {} // 連接用戶數
+  websocket: function (app, sessionParser) {
+    const Websocket = require('ws')
+    const http = require('http')
+    const server = http.createServer(app)
+    let user = {} // 連接用戶
     let online = 0 // 在線人數
 
-    //把app交給SocketServer開啟 WebSocket 的服務
-    const wss = new SocketServer({ server, verifyClient: yan })
-    function yan(info) {
-      console.log(info.req.headers.cookie)
-      let infoUrl = info.req.url
-      console.log('通過連接' + infoUrl)
+    const verifyClientFn = function (info) {
+      // console.log(info.req.headers.cookie) // 這邊可以拿到session
+      infoUrl = info.req.session.url
+      infoUser = info.req.session.passport.user
+      console.log('通過連接' + infoUrl + '來自使用者' + infoUser)
       return true
     }
+    const wss = new Websocket.Server({ port: 3001, clientTracking: true, noserver: true, verifyClient: verifyClientFn })
+
+    server.on('upgrade', function (request, socket, head) {
+      console.log(`parsing session from request...`)
+
+      // 把session從request解析出來(其實如果是在原本的http server間的req傳遞，不用那麼麻煩，直接req.session就可以完成存入跟取出資料)
+      sessionParser(request, {}, () => {
+        console.log(request.session.user)
+        if (!request.session.user) {
+          socket.destroy()
+          return
+        }
+        console.log('session is parsed!')
+        wss.handleUpgrade(request, socket, head, function (ws) {
+          // 這邊的意思好像是把解析過的request送回去給wss在連線的時候用，因為有試過把sessionParser整個註解掉，當wss.on的時候就收不到request.session的內容
+          wss.emit('connection', ws, request)
+        })
+      })
+    })
 
     // 當WebSocket從外面連結時執行
     wss.on('connection', (ws, req) => {
+
+      console.log(req.session.passport)
       console.log('Client connected')
       online = wss._server._connections
-      console.log('目前在線', online, '個連接')
-      ws.send('目前在線' + online + '個連接')
+
 
       let url = req.url
-      let chatHost = url.split('/')[2] //發起聊天的人的id
+      let chatHost = req.session.passport.user //發起聊天的人的id  
+      // ws.userId = chatHost
+      // console.log(req.url)
       // 把發起聊天的人的ws存在伺服器
       if (chatHost) {
         user[chatHost] = ws
+        // console.log(user)
       }
-      // console.log(user)
-      let chattedUser = url.split('/')[3] //被聊天的對象的id
 
-      // [待開發]首次連接就先去撈歷史訊息給Client
+      let chattedUser = url.split('/')[1] //被聊天的對象的id  
 
       // 對message進行監聽，接收從Client送進來的訊息
       ws.on('message', data => {
-        console.log(data)
+        const target1 = data.split("叕")[1]
+        const message1 = data.split("叕")[0]
+        Message.create({
+          sender: url.split('/')[3],
+          message: data,
+          targetChannel: target1
+        })
+
         console.log('收到' + url + '的消息' + data)
         // 判斷有沒有被聊天的對象
+        if (ws.sid === user[chatHost].sid) {
+          // console.log('成功驗證')
+        }
+        //先找channels,抓出id:a，用a去找出message{id:a}，塞聊天訊息
         if (chattedUser) {
           // 會去查看被聊天的對象有沒有被存在user裡了
           if (user[chattedUser]) {
@@ -46,9 +84,9 @@ const websocket = {
             用console發現好像是對方斷線的時候，會自動連動更新原本存在user裡的readyState?
             */
             if (user[chattedUser].readyState === 1) {
-              user[chattedUser].send(data) // 把訊息送給被聊天的對象
-              ws.send(data) // 也把訊息送回給發起聊天的人
-              ws.send('發送成功')
+              user[chattedUser].send(message1) // 把訊息送給被聊天的對象
+              // ws.send(message1) 也把訊息送回給發起聊天的人
+              // ws.send('發送成功')
 
             } else {
               ws.send('對方斷線')
@@ -75,6 +113,10 @@ const websocket = {
         // [待開發]最後把所有的聊天訊息存到資料庫(要另外新建一張資料表專門存訊息)
 
       })
+    })
+
+    server.listen(3000, function () {
+      console.log('Listening on http://localhost:3000');
     })
   }
 }

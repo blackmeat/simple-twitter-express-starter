@@ -1,12 +1,10 @@
-const url = 'ws://' + window.location.href.substring(7)
-console.log(url)
-
 // 使用WebSocket的網址向Server開啟連結
-let ws = new WebSocket(url)
+let ws = new WebSocket(`ws://localhost:3000`)
 
 // 開啟連結後執行的動作
 ws.onopen = () => {
     console.log('open connection')
+
 }
 
 // 關閉連結後執行
@@ -17,18 +15,37 @@ ws.onclose = () => {
 const messagesPrint = document.querySelector('#messagesPrint')
 const messageForm = document.querySelector('#messageForm')
 const messageInput = document.querySelector('#messageInput')
+const channel = document.querySelector('#channel')
+const messagesRight = document.querySelector('#messagesRight')
+const messagesLeft = document.querySelector('#messagesLeft')
 let messagesStored = []
-let allHtml = ``
+let allHtmlLeft = ``
+let allHtmlRight = ``
 // 接收Server發出的訊息
 ws.onmessage = event => {
     // 把拿到的訊息送去HTML印出
     let eachHtml = `<li>${event.data}</li>`
-    allHtml += eachHtml
-    messagesPrint.children[0].innerHTML = allHtml
+    let noHtml = `<li></li>`
+    allHtmlLeft += eachHtml
+    allHtmlRight += noHtml
+    console.log(event.data)
+    console.log(eachHtml)
+    console.log(messagesLeft)
+    messagesLeft.children[0].innerHTML = allHtmlLeft //列印別人
+    messagesRight.children[0].innerHTML = allHtmlRight
 }
 
 messageForm.addEventListener('submit', event => {
+
+    let eachHtml = `<li>${messageInput.value}</li>`
+    let noHtml = `<li></li>`
+    allHtmlRight += eachHtml   //列印自己
+    allHtmlLeft += noHtml
     event.preventDefault()
-    ws.send(messageInput.value)
+    ws.send(`${messageInput.value}叕${channel.value}`)
+    // event.submit()
+    messagesRight.children[0].innerHTML = allHtmlRight //列印
+    messagesLeft.children[0].innerHTML = allHtmlLeft
+
 })
 

@@ -49,12 +49,9 @@ const userController = {
   },
 
   signIn: (req, res) => {
-    const id = uuid.v4();
-
-    console.log(`Updating session for user ${id}`);
-    req.session.userId = id;
+    // console.log(req.headers)
     req.flash("success_messages", "成功登入")
-    console.log(req.session.userId)
+
     res.redirect("/tweets")
   },
 
