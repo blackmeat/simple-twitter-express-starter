@@ -7,7 +7,7 @@
                 users: [],
                 delimiter: '@',
                 sensitive: true,
-                emptyQuery: false,
+                emptyQuery: true,
                 queryBy: ['username', 'email'],
                 typeaheadOpts: {}
             };
@@ -77,7 +77,7 @@
                     var replace = data.substring(i, caratPos),
                         textBefore = data.substring(0, i),
                         textAfter = data.substring(caratPos),
-                        data = textBefore + item + textAfter;
+                        data = `${textBefore}${settings.delimiter}${item}${textAfter} `;
 
                     this.tempQuery = data;
 
