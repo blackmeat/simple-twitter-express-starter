@@ -27,6 +27,7 @@ let allHtmlRight = ``
 ws.onmessage = event => {
     // 把拿到的訊息送去HTML印出
     let eachHtml = `<li>${event.data}</li>`
+    console.log('event.data here', event.data)
     let noHtml = `<li></li>`
     allHtmlLeft += eachHtml
     allHtmlRight += noHtml
@@ -44,8 +45,13 @@ messageForm.addEventListener('submit', event => {
     allHtmlRight += eachHtml   //列印自己
     allHtmlLeft += noHtml
     event.preventDefault()
-    ws.send(`${messageInput.value}叕${channel.value}`)
-    // event.submit()
+    let message = {
+        target1: channel.value,
+        message1: messageInput.value
+    }
+
+    ws.send(JSON.stringify(message))
+
     messagesRight.children[0].innerHTML = allHtmlRight //列印
     messagesLeft.children[0].innerHTML = allHtmlLeft
 

@@ -11,27 +11,33 @@ const chatController = {
     User.findByPk(chattedUser).then(user => {
       if (user) {
 
-
-        // if (Number(req.user.id) === Number(req.params.hostChatId)) {
-        // Message.findByPk(33).then(channel => {
-        //   channel.destroy()
-        //   res.redirect("back")
-        // })
         Channel.findAll({}).then(channel => {
-          console.log(channel[0].id)
-          if ((Number(channel[0].member1) === Number(req.user.id) && Number(channel[0].member2) === Number(chattedUser)) || (Number(channel[0].member2) === Number(req.user.id) && Number(channel[0].member1) === Number(chattedUser))) {
-            let target = channel[0].id
+          let findChannel = [] //收集channel
+
+
+
+          for (let i = 0; i < channel.length; i++) {
+            if ((Number(channel[i].member1) === Number(req.user.id) && Number(channel[i].member2) === Number(chattedUser)) || (Number(channel[i].member2) === Number(req.user.id) && Number(channel[i].member1) === Number(chattedUser))) {
+              findChannel.push(channel[i].id) // 符合條件的channel放進去，因為不知道為甚麼資料庫會寫兩次一模一樣的channel，所以findChannel必須是陣列存兩筆一樣的東西，只是它的id不同而已
+              console.log('findChannel是', findChannel)
+            }
+          }
+          // console.log('列印', findChannel)
+
+          if (findChannel.length !== 0) {
+            console.log('findchannel[0]這', findChannel[0])
+            let target = findChannel[0]  //雙重連線為解決
 
             Message.findAll({
               where: { targetChannel: target }
             }).then(message => {
-              message = message.map((message) => ({
-                ...message.dataValues,
-                message: message.message.split("叕")[0],
-                sender: !message.sender.includes(req.user.id)
-              }))
-
-
+              message = message.map((message) => {
+                return {
+                  ...message.dataValues,
+                  message: JSON.parse(message.message).message1,
+                  sender: !message.sender.includes(req.user.id)
+                }
+              })
               res.render('chat', { message, target })
             })
           } else {
@@ -43,9 +49,7 @@ const chatController = {
             })
           }
         })
-        // } else {
-        //   return res.redirect('back')
-        // }
+        // console.log('列印', findChannel)
       } else {
         req.flash('error_messages', '您要聊天的對象不存在')
         res.redirect('/tweets')

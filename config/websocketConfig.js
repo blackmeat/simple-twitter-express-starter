@@ -61,8 +61,10 @@ const websocket = {
       console.log(chattedUser)
       // 對message進行監聽，接收從Client送進來的訊息
       ws.on('message', data => {
-        const target1 = data.split("叕")[1]
-        const message1 = data.split("叕")[0]
+        console.log('data here', JSON.parse(data))
+        const target1 = JSON.parse(data).target1
+        const message1 = JSON.parse(data).message1
+
         Message.create({
           sender: chatHost,
           message: data,
@@ -101,9 +103,6 @@ const websocket = {
       // 連結關閉時執行
       ws.on('close', () => {
         console.log('Close connected ')
-        // console.log(user)
-        // [待開發]最後把所有的聊天訊息存到資料庫(要另外新建一張資料表專門存訊息)
-
       })
     })
 
