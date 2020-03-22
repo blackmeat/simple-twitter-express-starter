@@ -6,10 +6,12 @@ const Followship = db.Followship
 const Tweet = db.Tweet
 const Like = db.Like
 
+
 const helpers = require("../_helpers")
 
 const Hashtag = db.Hashtag
 const Tag = db.Tag
+
 
 const fs = require('fs')
 const imgur = require('imgur-node-api')
@@ -55,7 +57,9 @@ const userController = {
   },
 
   signIn: (req, res) => {
+    // console.log(req.headers)
     req.flash("success_messages", "成功登入")
+
     res.redirect("/tweets")
   },
 

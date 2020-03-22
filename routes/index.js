@@ -1,7 +1,10 @@
 const userController = require("../controllers/userController")
 const tweetController = require("../controllers/tweetController")
 const adminController = require("../controllers/adminController")
+
+      const chatController = require("../controllers/chatController")
 const apiController = require("../controllers/api/apiController")
+
 const helpers = require("../_helpers")
 const multer = require('multer')
 const upload = multer({ dest: 'temp/' })
@@ -55,21 +58,17 @@ module.exports = (app, passport) => {
   app.delete("/admin/tweets/:id", authenticatedAdmin, adminController.deleteTweet)
   app.get("/admin/users", authenticatedAdmin, adminController.getUsers)
 
+
   // hashtag
   app.get("/hashtags/:id/tweets", authenticated, hashtagController.getHashtagTweets)
 
   // api
   app.get("/api/users", authenticated, apiController.getUser)
+
   // privateChat
   // :hostChatId表示發起聊天的人(即當前登入的使用者)， :id表示被聊天的對象
-  app.get('/chat/:hostChatId/:id', authenticated, (req, res) => {
-    // console.log(Number(req.user.id))
-    // console.log(Number(req.params.hostChatId))
-    if (Number(req.user.id) === Number(req.params.hostChatId)) {
-      res.render('chat')
-    } else {
-      return res.redirect('back')
-    }
+  app.get('/chat/:chatted', authenticated, chatController.showChat)
+  // hashtag
+  app.get("/hashtags/:id/tweets", authenticated, hashtagController.getHashtagTweets)
 
-  })
 }
