@@ -6,7 +6,7 @@ const Message = db.Message
 
 
 const websocket = {
-  websocket: function (app, sessionParser) {
+  websocket: function (app, sessionParser, port) {
     const Websocket = require('ws')
     const http = require('http')
     const server = http.createServer(app)
@@ -106,7 +106,7 @@ const websocket = {
       })
     })
 
-    server.listen(3000, function () {
+    server.listen(port, function () {
       console.log('Listening on http://localhost:3000');
     })
   }

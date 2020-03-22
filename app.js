@@ -7,7 +7,7 @@ const session = require("express-session")
 const flash = require("connect-flash")
 const methodOverride = require("method-override")
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 const http = require('http')
 const server = http.createServer(app)
 
@@ -41,6 +41,6 @@ app.use((req, res, next) => {
   next()
 })
 
-require('./config/websocketConfig').websocket(app, sessionParser, server)
+require('./config/websocketConfig').websocket(app, sessionParser, server, port)
 require("./routes/index")(app, passport)
 module.exports = app
