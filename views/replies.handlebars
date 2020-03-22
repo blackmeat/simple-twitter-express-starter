@@ -21,7 +21,7 @@
                         <h3>Like：{{likesAmount}}</h3>
                     </a>
                 </div>
-                {{#ifCond User.id userInfo.id}}
+                {{#ifCond tweet.User.id userInfo.id}}
                 <div class="text-center">
                     <a href="/users/{{tweet.User.id}}/edit" type="button" class="btn btn-primary">Edit Profile</a>
                 </div>
@@ -119,7 +119,7 @@
                         <div class="col-8">
                             {{!-- 名稱＋時間 --}}
                             <div class="row mb-4">
-                                <a href="/users/{{tweet.User.id}}/tweets">
+                                <a href="/users/{{this.User.id}}/tweets">
                                     <h5>{{this.User.name}}</h5>
                                 </a>
                                 <h5>&nbsp&nbsp{{date this.User.createdAt}}</h5>
