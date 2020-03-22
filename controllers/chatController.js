@@ -6,6 +6,7 @@ const User = db.User
 
 const chatController = {
   showChat: (req, res) => {
+    console.log('我要去聊天式')
     let chattedUser = req.params.chatted//被聊天的對象的id   
     // 判斷如果沒有被聊天的使用者在user表中，就不讓它繼續下去
     User.findByPk(chattedUser).then(user => {
