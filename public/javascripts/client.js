@@ -1,5 +1,5 @@
 // 使用WebSocket的網址向Server開啟連結
-const url = 'ws://' + window.location.href.substring(8)
+const url = 'wss://' + window.location.href.substring(8)
 console.log(url)
 let ws = new WebSocket(url)
 
