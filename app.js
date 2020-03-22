@@ -18,6 +18,8 @@ app.engine("handlebars", exhbs({
 }))
 app.set("view engine", "handlebars")
 
+app.use(express.static("public"))
+
 app.use(bodyParser.urlencoded({ extended: true }))
 
 // 設定靜態檔案路徑

@@ -49,12 +49,15 @@
               <h5>&nbsp&nbsp{{date this.createdAt}}</h5>
             </div>
             {{!-- 內容 --}}
+            <div class="row">
+              {{#if this.url}}
+              <a href="{{this.url}}" style="font-size: 18px;"><i class="fa fa-map-marker mr-2"
+                  aria-hidden="true"></i>{{this.place}}</a>
+              {{/if}}
+            </div>
             <p>
               {{this.description}}
             </p>
-            {{#if this.url}}
-            <a href="{{this.url}}"><i class="fa fa-map-marker" aria-hidden="true"></i>{{this.place}}</a>
-            {{/if}}
             <div class="row">
               {{!-- Reply --}}
               <div style="float: left;">

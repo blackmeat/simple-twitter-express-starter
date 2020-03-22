@@ -62,13 +62,16 @@
                             </a>
                             <h5>&nbsp&nbsp{{date tweet.createdAt}}</h5>
                         </div>
+                        <div class="row">
+                            {{#if tweet.url}}
+                            <a href="{{tweet.url}}" style="font-size: 18px;"><i class="fa fa-map-marker mr-2"
+                                    aria-hidden="true"></i>{{tweet.place}}</a>
+                            {{/if}}
+                        </div>
                         {{!-- 內容 --}}
                         <p>
                             {{tweet.description}}
                         </p>
-                        {{#if tweet.url}}
-                        <a href="{{tweet.url}}"><i class="fa fa-map-marker" aria-hidden="true"></i>{{tweet.place}}</a>
-                        {{/if}}
                         <div class="row">
                             {{!-- Reply --}}
                             <div style="float: left;">
