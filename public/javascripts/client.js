@@ -1,6 +1,6 @@
 // 使用WebSocket的網址向Server開啟連結
-const url = 'ws://' + window.location.href.substring(7)
-
+const url = 'ws://' + window.location.href.substring(8)
+console.log(url)
 let ws = new WebSocket(url)
 
 // 開啟連結後執行的動作
