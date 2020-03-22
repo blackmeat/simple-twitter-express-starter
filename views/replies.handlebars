@@ -80,12 +80,12 @@
                             {{!-- Like --}}
                             <div style="float: left;">
                                 {{#if isLiked }}
-                                <form action="/tweets/{{tweet.id}}/unlike?_method=DELETE" method="POST">
+                                <form action="/tweets/{{tweet.id}}/unlike" method="POST">
                                     <button type="submit" class="btn btn-link"
                                         style="color: red;">Unlike({{tweetLikedAmount}})</button>
                                 </form>
                                 {{else}}
-                                <form action="/tweets/{{this.id}}/like" method="POST">
+                                <form action="/tweets/{{tweet.id}}/like" method="POST">
                                     <button type="submit" class="btn btn-link">Like({{tweetLikedAmount}})</button>
                                 </form>
                                 {{/if}}
