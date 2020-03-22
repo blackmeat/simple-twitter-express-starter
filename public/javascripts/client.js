@@ -54,6 +54,6 @@ messageForm.addEventListener('submit', event => {
 
     messagesRight.children[0].innerHTML = allHtmlRight //列印
     messagesLeft.children[0].innerHTML = allHtmlLeft
-
+    messageInput.value = ""
 })
 
