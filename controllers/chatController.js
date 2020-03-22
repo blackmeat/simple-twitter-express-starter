@@ -39,7 +39,7 @@ const chatController = {
                   sender: !message.sender.includes(req.user.id)
                 }
               })
-              res.render('chat', { message, target })
+              return res.render('chat', { message, target })
             })
           } else {
             Channel.create({
