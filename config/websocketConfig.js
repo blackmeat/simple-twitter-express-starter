@@ -6,10 +6,8 @@ const Message = db.Message
 
 
 const websocket = {
-  websocket: function (app, sessionParser, port) {
+  websocket: function (app, sessionParser, server, port) {
     const Websocket = require('ws')
-    const http = require('http')
-    const server = http.createServer(app)
     let user = {} // 連接用戶
     let online = 0 // 在線人數
 

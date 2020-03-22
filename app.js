@@ -11,6 +11,10 @@ const port = process.env.PORT || 3000
 const http = require('http')
 const server = http.createServer(app)
 
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
 app.use(methodOverride("_method"))
 app.engine("handlebars", exhbs({
   defaultLayout: "main",
