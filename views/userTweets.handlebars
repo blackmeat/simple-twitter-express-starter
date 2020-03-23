@@ -14,7 +14,7 @@
           <a href="/users/{{User.id}}/followings">
             <h3>Following：{{User.FollowingCount}}</h3>
           </a>
-          <a href="/users/{{User.id}}followers">
+          <a href="/users/{{User.id}}/followers">
             <h3>Follower：{{User.FollowerCount}}</h3>
           </a>
           <a href="/users/{{User.id}}/likes">
@@ -29,20 +29,31 @@
         {{#if User.isFollowing}}
         <form action="/followships/{{User.id}}?_method=DELETE" method="POST">
           <div class="text-center">
-            <button type="submit" class="btn btn-danger">Unfollow</button>
+            <button type="submit" class="btn btn-outline-danger">Unfollow</button>
           </div>
         </form>
+        <div class="text-center my-3">
+          <a href="/chat/{{User.id}}" class="btn"
+            style="font-size: 24px;color:rgb(250,150,10);border-color:rgb(250, 150, 10)">Start
+            Chat
+          </a>
+        </div>
         {{else}}
         <form action="/followships" method="POST">
           <div class="text-center">
             <button type="submit" class="btn btn-primary">Follow</button>
           </div>
           <input type="hidden" name="id" value="{{User.id}}">
-        </form>
-        <a href="/chat/{{userInfo.id}}/{{User.id}}" class="btn btn-warning">Chat</a>
+        </form>   
+        <div class="text-center my-3">
+          <a href="/chat/{{User.id}}" class="btn"
+            style="font-size: 24px;color:rgb(250,150,10);border-color:rgb(250, 150, 10)">Start
+            Chat
+          </a>
+        </div>
         {{/if}}
-
         {{/ifCond}}
+        
       </div>
     </div>
 
