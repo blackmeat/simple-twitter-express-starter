@@ -26,7 +26,12 @@
           <a href="/users/{{user.id}}/edit" type="button" class="btn btn-primary">Edit Profile</a>
         </div>
         {{else}}
-        <a href="/chat/{{user.id}}" class="btn btn-warning">Chat</a>
+        <div class="text-center my-3">
+          <a href="/chat/{{user.id}}" class="btn"
+            style="font-size: 24px;color:rgb(250,150,10);border-color:rgb(250, 150, 10)">Start
+            Chat
+          </a>
+        </div>
         {{/ifCond}}
       </div>
     </div>
