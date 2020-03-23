@@ -32,6 +32,7 @@
                         <button type="submit" class="btn btn-danger">Unfollow</button>
                     </div>
                 </form>
+                <a href="/chat/{{currentUser.id}}" class="btn btn-warning">Chat</a>
                 {{else}}
                 <form action="/followships" method="POST">
                     <div class="text-center">
@@ -39,12 +40,17 @@
                     </div>
                     <input type="hidden" name="id" value="{{currentUser.id}}">
                 </form>
+                <a href="/chat/{{currentUser.id}}" class="btn btn-warning">Chat</a>
                 {{/if}}
                 {{/ifCond}}
             </div>
         </div>
         <div class="col-8">
+            {{#ifCond nowis 'following'}}
             <h2>followings</h2>
+            {{else}}
+            <h2>followers</h2>
+            {{/ifCond}}
             <div class="row my-2">
                 {{#each followingsAndFollowers}}
                 <div class="col-md-6">

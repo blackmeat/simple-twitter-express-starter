@@ -6,10 +6,8 @@ const Message = db.Message
 
 
 const websocket = {
-  websocket: function (app, sessionParser) {
+  websocket: function (app, sessionParser, server, port) {
     const Websocket = require('ws')
-    const http = require('http')
-    const server = http.createServer(app)
     let user = {} // 連接用戶
     let online = 0 // 在線人數
 
@@ -106,7 +104,7 @@ const websocket = {
       })
     })
 
-    server.listen(3000, function () {
+    server.listen(port, function () {
       console.log('Listening on http://localhost:3000');
     })
   }
