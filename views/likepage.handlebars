@@ -12,7 +12,7 @@
             <h3>Tweets：{{user.TweetCount}}</h3>
           </a>
           <a href="/users/{{user.id}}/followings">
-            <h3>Following：{{user.FollowingCount}}</h3>
+            <h3>Following：{{user.FollowingConut}}</h3>
           </a>
           <a href="/users/{{user.id}}/followers">
             <h3>Follower：{{user.FollowerCount}}</h3>
@@ -25,8 +25,6 @@
         <div class="text-center">
           <a href="/users/{{user.id}}/edit" type="button" class="btn btn-primary">Edit Profile</a>
         </div>
-        {{else}}
-        <a href="/chat/{{user.id}}" class="btn btn-warning">Chat</a>
         {{/ifCond}}
       </div>
     </div>

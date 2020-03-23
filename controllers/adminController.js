@@ -72,16 +72,16 @@ const adminContoller = {
             include: [
               Like,
               { model: Tweet, include: [Like] },
-              { model: User, as: "Followings" },
-              { model: User, as: "Followers" }
+              { model: User, as: "followingId" },
+              { model: User, as: "followerId" }
             ]
           })
           .then((Users) => {
             Users = Users.map((User) => ({
               ...User.dataValues,
               TweetCount: User.dataValues.Tweets.length,
-              FollowerCount: User.dataValues.Followers.length,
-              FollowingCount: User.dataValues.Followings.length,
+              FollowerCount: User.dataValues.followerId.length,
+              FollowingCount: User.dataValues.followingId.length,
             }))
             Users = Users.sort((a, b) => b.TweetCount - a.TweetCount)
             forLike = forLike.sort((a, b) => b.TweetCount - a.TweetCount)
