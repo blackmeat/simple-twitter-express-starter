@@ -172,8 +172,7 @@ const userController = {
           likesAmount: user.Likes.length,
           followingsAndFollowers: followings,
           paramsId: Number(req.params.id),
-          isFollowed: helpers.getUser(req).Followings.map(d => d.id).includes(user.id),
-          nowis: 'following'
+          isFollowed: helpers.getUser(req).Followings.map(d => d.id).includes(user.id)
         }
         return res.render('following', data)
       })
@@ -208,8 +207,7 @@ const userController = {
           followingsAndFollowers: followers,
           paramsId: Number(req.params.id),
           // 拿出現在登入的使用者追蹤了哪些人，判斷當前頁面擁有者是否在裡面
-          isFollowed: helpers.getUser(req).Followings.map(d => d.id).includes(user.id),
-          nowis: 'follower'
+          isFollowed: helpers.getUser(req).Followings.map(d => d.id).includes(user.id)
         }
         return res.render('following', data)
       })
